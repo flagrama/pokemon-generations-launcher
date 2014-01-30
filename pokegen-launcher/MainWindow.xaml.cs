@@ -65,11 +65,16 @@ namespace PokeGen {
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);
-                string versionNum = reader.ReadToEnd();
+                string updateVer = reader.ReadToEnd();
                 reader.Close();
                 dataStream.Close();
                 response.Close();
-                if (Version.Parse(versionNum) > Assembly.GetExecutingAssembly().GetName().Version) ;
+
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+                string curVer = fileVersionInfo.ProductVersion;
+
+                if (Version.Parse(updateVer) > Version.Parse(curVer))
                 {
                     Process.Start(Path.Combine(Environment.CurrentDirectory.ToString(), "Update.exe"));
                     //Application.Current.Shutdown();
