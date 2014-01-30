@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace PokeGen {
     public partial class MainWindow {
@@ -50,19 +51,43 @@ namespace PokeGen {
 
         //  Load up the images and any other information from the site.
         private void Window_Loaded(object sender, RoutedEventArgs e) {
-            if(System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()) {
-                if(Properties.Settings.Default.pathName.Length > 0) {
+            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                if (Properties.Settings.Default.pathName.Length > 0)
+                {
                     savePath = Properties.Settings.Default.pathName;
                 }
 
-                if(!Directory.Exists(savePath + "/PokeGen/")) {
+
+
+                WebRequest req = WebRequest.Create("http://www.flagrama.com/pokegen-launcher/version.txt");
+                req.Credentials = CredentialCache.DefaultCredentials;
+                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string versionNum = reader.ReadToEnd();
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+                if (Version.Parse(versionNum) > Assembly.GetExecutingAssembly().GetName().Version) ;
+                {
+                    Process.Start(Path.Combine(Environment.CurrentDirectory.ToString(), "Update.exe"));
+                    //Application.Current.Shutdown();
+                    Process.GetCurrentProcess().Kill();
+                }
+
+
+
+                if (!Directory.Exists(savePath + "/PokeGen/"))
+                {
                     ChoosePath();
                 }
 
                 LoadNews();
                 FindImages();
                 CheckPath();
-            } else {
+            }
+            else {
                 ConnectionFailure popup = new ConnectionFailure();
                 popup.ShowDialog();
                 Close();
@@ -498,7 +523,7 @@ namespace PokeGen {
                 Properties.Settings.Default.Save();
             }
             else
-                this.Close();
+                Application.Current.Shutdown();
         }
 
         private void MovePath() {
