@@ -91,14 +91,12 @@
     <Compile Include="ConnectionFailure.xaml.cs">
       <DependentUpon>ConnectionFailure.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RelayCommand.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings1.settings</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ViewModelBase.cs" />
     <Page Include="ConnectionFailure.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

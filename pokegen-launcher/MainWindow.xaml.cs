@@ -491,11 +491,14 @@ namespace PokeGen {
             WinForms.FolderBrowserDialog dialog = new WinForms.FolderBrowserDialog();
             dialog.Description = "Where should PokeGen be installed?";
 
-            if(dialog.ShowDialog() == WinForms.DialogResult.OK) {
+            if (dialog.ShowDialog() == WinForms.DialogResult.OK)
+            {
                 savePath = dialog.SelectedPath;
                 Properties.Settings.Default.pathName = savePath;
                 Properties.Settings.Default.Save();
             }
+            else
+                this.Close();
         }
 
         private void MovePath() {
