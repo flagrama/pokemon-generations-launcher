@@ -9,14 +9,12 @@ using System.Diagnostics;
 using WinForms = System.Windows.Forms;
 using System.ComponentModel;
 
-using System.Threading;
 using System.Net;
 
 using System.Windows.Media;
 
 using HtmlAgilityPack;
 
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +22,7 @@ using System.Text;
 using System.Security.Cryptography;
 
 namespace PokeGen {
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         string pic1;
         string pic2;
         string pic3;
@@ -33,7 +31,6 @@ namespace PokeGen {
         string news2;
         string news3;
 
-        BackgroundWorker bgWorker = new BackgroundWorker();
         string savePath;
 
         Queue<string> urls = new Queue<string>();
@@ -42,7 +39,7 @@ namespace PokeGen {
         int noOfFiles;
         double baseProgress;
 
-        float forCount = 0;
+        float forCount;
 
         string versionInfo;
 
@@ -82,16 +79,16 @@ namespace PokeGen {
 
         //  Load the news segment of the Mod DB Page.
         private void LoadNews() {
-            HtmlAgilityPack.HtmlWeb hw = new HtmlAgilityPack.HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = hw.Load("http://www.moddb.com/games/pokemon-generations/news");
+            HtmlWeb hw = new HtmlWeb();
+            HtmlDocument doc = hw.Load("http://www.moddb.com/games/pokemon-generations/news");
 
             var nameNode = doc.DocumentNode.SelectSingleNode("(//div[@class='title'])[position() = 3]");
             var results = nameNode.SelectSingleNode(".//span[@class='heading']");
             label1.Content = results.InnerHtml;
 
-            HtmlAgilityPack.HtmlNode artNode1 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 1]");
-            HtmlAgilityPack.HtmlNode artNode2 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 2]");
-            HtmlAgilityPack.HtmlNode artNode3 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 3]");
+            HtmlNode artNode1 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 1]");
+            HtmlNode artNode2 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 2]");
+            HtmlNode artNode3 = doc.DocumentNode.SelectSingleNode("(//h4)[position() = 3]");
 
             var artNameNode1 = artNode1.SelectSingleNode(".//a[@href]");
             var artNameNode2 = artNode2.SelectSingleNode(".//a[@href]");
@@ -116,8 +113,8 @@ namespace PokeGen {
 
         //  Distribute and showcase the images downloaded.
         private void FindImages() {
-            HtmlAgilityPack.HtmlWeb hw = new HtmlAgilityPack.HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = hw.Load("http://www.moddb.com/games/pokemon-generations");
+            HtmlWeb hw = new HtmlWeb();
+            HtmlDocument doc = hw.Load("http://www.moddb.com/games/pokemon-generations");
 
             var newDiv = doc.DocumentNode.SelectSingleNode("//div[@class='mediapreview clear']");
             var link1 = newDiv.SelectSingleNode("(.//a[@href])[position() = 1]");
@@ -143,7 +140,7 @@ namespace PokeGen {
 
         //  Close the window.
         private void button1_Click(object sender, RoutedEventArgs e) {
-            this.Close();
+            Close();
         }
 
         //  Moove the window.
@@ -153,21 +150,17 @@ namespace PokeGen {
 
         //  Take us to the locations of each image.
         private void mdbImg1_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(pic1);
         }
         private void mdbImg2_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(pic2);
         }
         private void mdbImg3_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(pic3);
         }
 
         //  Take us to the forums when we click the little PG symbol.
         private void image3_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start("http://pokegen.freeforums.org/index.php");
         }
 
@@ -186,7 +179,7 @@ namespace PokeGen {
             client.Credentials = new NetworkCredential("publicUser", "boom");
             var page = client.DownloadString("http://www.pokegen.ca/public_svn/PokeGen/");
 
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(page);
 
             var newNode = doc.DocumentNode.SelectSingleNode("//title");
@@ -219,22 +212,18 @@ namespace PokeGen {
         }
 
         private void label1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(news1);
         }
 
         private void label8_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(news2);
         }
 
         private void label9_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start(news3);
         }
 
         private void label14_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start("http://www.moddb.com/games/pokemon-generations/news");
         }
 
@@ -286,20 +275,6 @@ namespace PokeGen {
             label14.Foreground = newBrush;
         }
 
-        public static bool IsConnected {
-            get {
-                try {
-                    HttpWebRequest hwebRequest = (HttpWebRequest)WebRequest.Create("http://www.microsoft.com");
-                    hwebRequest.Timeout = 10000;
-                    HttpWebResponse hWebResponse = (HttpWebResponse)hwebRequest.GetResponse();
-                    if(hWebResponse.StatusCode == HttpStatusCode.OK) {
-                        return true;
-                    } else
-                        return false;
-                } catch { return false; }
-            }
-        }
-
         private void image3_MouseEnter_1(object sender, MouseEventArgs e) {
             image3.Opacity = 0.75;
         }
@@ -333,7 +308,6 @@ namespace PokeGen {
         }
 
         private void image4_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start("http://www.moddb.com/games/pokemon-generations");
         }
 
@@ -346,7 +320,6 @@ namespace PokeGen {
         }
 
         private void image5_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Process myProcess = new Process();
             Process.Start("https://twitter.com/xatoku");
         }
 
@@ -378,7 +351,7 @@ namespace PokeGen {
             client.Credentials = new NetworkCredential("publicUser", "boom");
             var page = client.DownloadString("http://www.pokegen.ca/public_svn/PokeGen/version.txt");
 
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(page);
 
             versionInfo = doc.DocumentNode.InnerText;
@@ -389,7 +362,7 @@ namespace PokeGen {
 
             WebClient client = new WebClient();
             client.Credentials = new NetworkCredential("publicUser", "boom");
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(client.DownloadString(dlPath));
 
             HtmlNodeCollection linkNodes = doc.DocumentNode.SelectNodes("//li");
@@ -453,7 +426,7 @@ namespace PokeGen {
         }
 
         private void DownloadFile() {
-            this.Dispatcher.BeginInvoke((Action)(() => {
+            Dispatcher.BeginInvoke((Action)(() => {
                 if(urls.Any()) {
                     WebClient client = new WebClient();
                     client.Credentials = new NetworkCredential("publicUser", "boom");
@@ -488,7 +461,7 @@ namespace PokeGen {
         }
 
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
-            this.Dispatcher.BeginInvoke(new Action(() => {
+            Dispatcher.BeginInvoke(new Action(() => {
                 double bytesIn = double.Parse(e.BytesReceived.ToString());
                 double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
                 double percentage = bytesIn / totalBytes * 100;
