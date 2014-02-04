@@ -10,21 +10,21 @@ using PokeGen.Model;
 
 namespace PokeGen.ViewModel
 {
-    class MainWindowViewModel : INotifyPropertyChanged
+    internal class MainWindowViewModel : INotifyPropertyChanged
     {
         private Launcher _modelLauncher;
 
-        public Launcher ModelLauncher
-        {
+        public Launcher ModelLauncher {
             get { return _modelLauncher; }
-            set { _modelLauncher = value;
-            OnPropertyChanged("ModelLauncher"); }
+            set {
+                _modelLauncher = value;
+                OnPropertyChanged("ModelLauncher");
+            }
         }
 
         public WindowState WindowState { get; set; }
 
-        public MainWindowViewModel()
-        {
+        public MainWindowViewModel() {
             // Button Commands
             LoadCommand = new DelegateCommand(OnLoad);
             CloseCommand = new DelegateCommand(OnClose);
@@ -51,8 +51,7 @@ namespace PokeGen.ViewModel
             LoadLauncher();
         }
 
-        private void LoadLauncher()
-        {
+        private void LoadLauncher() {
             ModelLauncher = new Launcher();
         }
 
@@ -72,24 +71,17 @@ namespace PokeGen.ViewModel
         public ICommand NewsPic2Command { get; private set; }
         public ICommand NewsPic3Command { get; private set; }
 
-        private void OnLoad()
-        {
-            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
-            {
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.pathName))
-                {
+        private void OnLoad() {
+            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()) {
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.pathName)) {
                     ModelLauncher.SavePath = Properties.Settings.Default.pathName;
                 }
 
-                if (!string.IsNullOrEmpty(ModelLauncher.SavePath))
-                {
-                    if (!Directory.Exists(Path.Combine(ModelLauncher.SavePath, "PokeGen")))
-                    {
+                if (!string.IsNullOrEmpty(ModelLauncher.SavePath)) {
+                    if (!Directory.Exists(Path.Combine(ModelLauncher.SavePath, "PokeGen"))) {
                         ModelLauncher.ChoosePath();
                     }
-                }
-                else
-                {
+                } else {
                     ModelLauncher.ChoosePath();
                 }
 
@@ -98,63 +90,93 @@ namespace PokeGen.ViewModel
                 ModelLauncher.CheckPath();
 
                 OnPropertyChanged("ModelLauncher");
-            }
-            else
-            {
+            } else {
                 var connectionFailure = new ConnectionFailure();
                 connectionFailure.ShowDialog();
                 Application.Current.Shutdown();
             }
         }
 
-        private static void OnClose()
-        {
+        private static void OnClose() {
             Application.Current.Shutdown();
         }
 
-        private void OnMinimize()
-        {
+        private void OnMinimize() {
             WindowState = WindowState.Minimized;
             OnPropertyChanged("WindowState");
         }
 
-        private void OnPlay()
-        {
+        private void OnPlay() {
             var gamePath = Path.Combine(ModelLauncher.SavePath, "PokeGen/PokeGen.exe");
-            if (File.Exists(gamePath))
-            {
-                Process.Start(gamePath);
-                Application.Current.Shutdown();
-            }
-            else
-            {
+            if (File.Exists(gamePath)) {
+                try {
+                    Process.Start(gamePath);
+                    Application.Current.Shutdown();
+                } catch {
+                    var connectionFailure = new ConnectionFailure
+                    {
+                        label13 = {Content = "PokeGen.exe is invalid"},
+                        textBlock1 = { Text = "The file 'PokeGen.exe' is invalid. Try restarting the launcher, and if the problem persists, delete the file before restarting the launcher." },
+                        button1 = {IsEnabled = false},
+                        button2 = {IsEnabled = false}
+                    };
+                    connectionFailure.ShowDialog();
+                    Application.Current.MainWindow.Close();
+                }
+            } else {
                 ModelLauncher.StartCheckingFiles();
                 OnPropertyChanged("ModelLauncher");
             }
         }
 
-        private void OnOpenPath() { Process.Start(ModelLauncher.SavePath); }
+        private void OnOpenPath() {
+            Process.Start(ModelLauncher.SavePath);
+        }
 
-        private void OnMovePath()
-        {
+        private void OnMovePath() {
             ModelLauncher.MovePath();
             ModelLauncher.CheckPath();
         }
 
-        private void OnNewsItem1() { Process.Start(ModelLauncher.NewsItemLink1); }
-        private void OnNewsItem2() { Process.Start(ModelLauncher.NewsItemLink2); }
-        private void OnNewsItem3() { Process.Start(ModelLauncher.NewsItemLink3); }
-        private static void OnOpenModDb() { Process.Start("http://www.moddb.com/games/pokemon-generations"); }
-        private static void OnOpenTwitter() { Process.Start("https://twitter.com/xatoku"); }
-        private static void OnOpenForum() { Process.Start("http://pokegen.freeforums.org"); }
-        private void OnNewsPic1() { Process.Start(ModelLauncher.NewsPicLink1); }
-        private void OnNewsPic2() { Process.Start(ModelLauncher.NewsPicLink2); }
-        private void OnNewsPic3() { Process.Start(ModelLauncher.NewsPicLink3); }
+        private void OnNewsItem1() {
+            Process.Start(ModelLauncher.NewsItemLink1);
+        }
+
+        private void OnNewsItem2() {
+            Process.Start(ModelLauncher.NewsItemLink2);
+        }
+
+        private void OnNewsItem3() {
+            Process.Start(ModelLauncher.NewsItemLink3);
+        }
+
+        private static void OnOpenModDb() {
+            Process.Start("http://www.moddb.com/games/pokemon-generations");
+        }
+
+        private static void OnOpenTwitter() {
+            Process.Start("https://twitter.com/xatoku");
+        }
+
+        private static void OnOpenForum() {
+            Process.Start("http://pokegen.freeforums.org");
+        }
+
+        private void OnNewsPic1() {
+            Process.Start(ModelLauncher.NewsPicLink1);
+        }
+
+        private void OnNewsPic2() {
+            Process.Start(ModelLauncher.NewsPicLink2);
+        }
+
+        private void OnNewsPic3() {
+            Process.Start(ModelLauncher.NewsPicLink3);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName)
-        {
+        private void OnPropertyChanged(string propertyName) {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
