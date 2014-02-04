@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using HtmlAgilityPack;
+using PokeGen.ViewModel;
 
 namespace PokeGen.Model
 {
-    class Launcher : INotifyPropertyChanged
+    internal class Launcher : INotifyPropertyChanged
     {
         private readonly Queue<String> _urlQueue = new Queue<string>();
         private readonly Queue<String> _urlPathQueue = new Queue<string>();
@@ -45,29 +50,24 @@ namespace PokeGen.Model
         public String NewsPicLink2 { get; private set; }
         public String NewsPicLink3 { get; private set; }
 
-        public void ChoosePath()
-        {
+        public void ChoosePath() {
             var folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog
             {
                 Description = "Where should PokeGen be installed?"
             };
 
-            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 SavePath = folderBrowserDialog.SelectedPath;
                 Properties.Settings.Default.pathName = SavePath;
                 Properties.Settings.Default.Save();
 
                 OnPropertyChanged("SavePath");
-            }
-            else
-            {
+            } else {
                 Application.Current.Shutdown();
             }
         }
 
-        public void CheckPath()
-        {
+        public void CheckPath() {
             var versionNumber = new String(CurrentRevision().Where(Char.IsDigit).ToArray());
             VersionStatus = "PokeGen Version: " + versionNumber;
 
@@ -77,15 +77,12 @@ namespace PokeGen.Model
             StartCheckingFiles();
         }
 
-        public void MovePath()
-        {
+        public void MovePath() {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
 
             if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
-            if (SavePath != dialog.SelectedPath)
-            {
-                if (Directory.Exists(SavePath + "/PokeGen/"))
-                {
+            if (SavePath != dialog.SelectedPath) {
+                if (Directory.Exists(SavePath + "/PokeGen/")) {
                     var src = SavePath + "/PokeGen/";
                     var dir = dialog.SelectedPath + "/PokeGen/";
                     Directory.Move(src, dir);
@@ -104,8 +101,7 @@ namespace PokeGen.Model
             OnPropertyChanged("UpToDate");
         }
 
-        public void LoadNews()
-        {
+        public void LoadNews() {
             var htmlWeb = new HtmlWeb();
             var htmlDocument = htmlWeb.Load("http://www.moddb.com/games/pokemon-generations/news");
 
@@ -141,8 +137,7 @@ namespace PokeGen.Model
             OnPropertyChanged("NewsItemDate3");
         }
 
-        public void FindImages()
-        {
+        public void FindImages() {
             var htmlWeb = new HtmlWeb();
             var htmlDocument = htmlWeb.Load("http://www.moddb.com/games/pokemon-generations");
 
@@ -168,8 +163,7 @@ namespace PokeGen.Model
             NewsPic3 = new BitmapImage(new Uri(src3, UriKind.Absolute));
         }
 
-        public void StartCheckingFiles()
-        {
+        public void StartCheckingFiles() {
             var backgroundWorker = new BackgroundWorker();
 
             UpdateStatus = "Calculating Differences...";
@@ -181,47 +175,64 @@ namespace PokeGen.Model
             GetVersionFileInfo();
 
             backgroundWorker.DoWork +=
-                (sender, e) => GetUpdateFiles("http://www.pokegen.ca/Release Build/PokeGen/", "");
+                (sender, e) =>
+                {
+                    try {
+                        GetUpdateFiles("http://www.pokegen.ca/Release Build/PokeGen/", "");
+                    } catch {
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            var connectionFailure = new ConnectionFailure
+                            {
+                                textBlock1 =
+                                {
+                                    Text =
+                                        "Could not connect to www.pokegen.ca, please try again later or check your internet settings."
+                                },
+                                button1 = {IsEnabled = true}
+                            };
+                            connectionFailure.Show();
+                            Application.Current.MainWindow.Close();
+                        }));
+                    }
+                };
 
-            backgroundWorker.RunWorkerAsync();
+            try {
+                backgroundWorker.RunWorkerAsync();
+            } catch {
+                var connectionFailure = new ConnectionFailure();
+                connectionFailure.Show();
+                Application.Current.Shutdown();
+            }
         }
 
-        private void GetVersionFileInfo()
-        {
+        private void GetVersionFileInfo() {
             var client = new WebClient();
 
             client.DownloadStringCompleted += (sender, e) =>
             {
-                var doc = new HtmlDocument();
-                doc.LoadHtml(e.Result);
-                if(!string.IsNullOrEmpty(doc.DocumentNode.InnerText))
-                    VersionInfo = doc.DocumentNode.InnerText;
+                try {
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(e.Result);
+                    if (!string.IsNullOrEmpty(doc.DocumentNode.InnerText))
+                        VersionInfo = doc.DocumentNode.InnerText;
+                } catch {
+                }
             };
 
             client.DownloadStringAsync(new Uri("http://www.pokegen.ca/Release Build/PokeGen/version.txt"));
         }
 
 
-        private void GetUpdateFiles(string downloadPath, string previousLink)
-        {
+        private void GetUpdateFiles(string downloadPath, string previousLink) {
             forCount += 1;
 
             var webClient = new WebClient();
             var htmlDocument = new HtmlDocument();
-            try
-            {
-                htmlDocument.LoadHtml(webClient.DownloadString(downloadPath));
-            }
-            catch (WebException ex)
-            {
-                UpdateStatus = ex.Message;
-                OnPropertyChanged("UpdateStatus");
-            }
-
+            htmlDocument.LoadHtml(webClient.DownloadString(downloadPath));
             var htmlNodeCollection = htmlDocument.DocumentNode.SelectNodes("//a");
 
-            foreach (var linkNode in htmlNodeCollection)
-            {
+            foreach (var linkNode in htmlNodeCollection) {
                 var link = linkNode.Attributes["href"].Value;
                 link = link.Replace("%20", " ");
 
@@ -229,51 +240,40 @@ namespace PokeGen.Model
                 var path = previousLink + link;
 
                 if (Char.IsPunctuation(link[0])) continue;
-                if (!Char.IsPunctuation(url[url.Length - 1]))
-                {
+                if (!Char.IsPunctuation(url[url.Length - 1])) {
                     if (link == "version.txt") continue;
-                    if (!File.Exists(SavePath + "/PokeGen/" + path))
-                    {
+                    if (!File.Exists(SavePath + "/PokeGen/" + path)) {
                         NumFiles += 1;
                         _urlQueue.Enqueue(url);
                         _urlPathQueue.Enqueue(SavePath + "/PokeGen/" + path);
-                    }
-                    else
-                    {
+                    } else {
                         if (!IsFileCurrent(SavePath + "/PokeGen/" + path)) continue;
                         NumFiles += 1;
                         _urlQueue.Enqueue(url);
                         _urlPathQueue.Enqueue(SavePath + "/PokeGen/" + path);
                     }
-                }
-                else
-                {
+                } else {
                     if (!Directory.Exists(SavePath + "/PokeGen/" + path))
                         Directory.CreateDirectory(SavePath + "/PokeGen/" + path);
                     GetUpdateFiles(url, path);
                 }
             }
-
             forCount -= 1;
-            if (forCount == 0)
-            {
+            if (forCount == 0) {
                 DownloadFile();
             }
         }
 
-        private bool IsFileCurrent(string path)
-        {
+        private bool IsFileCurrent(string path) {
             var localHash = GetHash(path);
 
-            if(!string.IsNullOrEmpty(VersionInfo))
+            if (!string.IsNullOrEmpty(VersionInfo))
                 return !VersionInfo.Contains(localHash);
             return false;
         }
 
-        private static string GetHash(string path)
-        {
-            using (var md5 = new MD5CryptoServiceProvider())
-            {
+        private static string GetHash(string path) {
+            using (var md5 = new MD5CryptoServiceProvider()) {
                 var buffer = md5.ComputeHash(File.ReadAllBytes(path));
                 var sb = new StringBuilder();
                 foreach (var b in buffer)
@@ -282,77 +282,83 @@ namespace PokeGen.Model
             }
         }
 
-        private void DownloadFile()
-        {
-            if (_urlQueue.Any())
-            {
-                using (var webClient = new WebClient())
-                {
+        private void DownloadFile() {
+            if (_urlQueue.Any()) {
+                using (var webClient = new WebClient()) {
                     webClient.DownloadProgressChanged += client_DownloadProgressChanged;
                     webClient.DownloadFileCompleted += client_DownloadFileCompleted;
                     webClient.DownloadFileAsync(new Uri(_urlQueue.Dequeue()), _urlPathQueue.Dequeue());
                 }
-            }
-            else
-            {
-                UpdateStatus = "Labeling version...";
-                ProgressVisibility = Visibility.Hidden;
-                Properties.Settings.Default.revision = FindRevision();
-                Properties.Settings.Default.Save();
-                UpdateStatus = String.Empty;
+            } else {
+                try {
+                    UpdateStatus = "Labeling version...";
+                    ProgressVisibility = Visibility.Hidden;
+                    Properties.Settings.Default.revision = FindRevision();
+                    Properties.Settings.Default.Save();
+                    UpdateStatus = String.Empty;
 
-                File.Delete(SavePath + "/PokeGen/" + "version.txt");
-                StreamWriter sw = File.CreateText(SavePath + "/PokeGen/" + "/version.txt");
-                sw.Write(FindRevision());
-                sw.Close();
+                    File.Delete(SavePath + "/PokeGen/" + "version.txt");
+                    StreamWriter sw = File.CreateText(SavePath + "/PokeGen/" + "/version.txt");
+                    sw.Write(FindRevision());
+                    sw.Close();
 
-                UpToDate = "PokeGen is up to date.";
-                PlayIsEnabled = true;
-                PathIsEnabled = true;
+                    UpToDate = "PokeGen is up to date.";
+                    PlayIsEnabled = true;
+                    PathIsEnabled = true;
 
-                var versionNum = new String(CurrentRevision().Where(Char.IsDigit).ToArray());
-                VersionStatus = "PokeGen Version: " + versionNum;
+                    var versionNum = new String(CurrentRevision().Where(Char.IsDigit).ToArray());
+                    VersionStatus = "PokeGen Version: " + versionNum;
 
-                OnPropertyChanged("UpdateStatus");
-                OnPropertyChanged("ProgressVisibility");
-                OnPropertyChanged("UpToDate");
-                OnPropertyChanged("PlayIsEnabled");
-                OnPropertyChanged("PathIsEnabled");
-                OnPropertyChanged("VersionStatus");
+                    OnPropertyChanged("UpdateStatus");
+                    OnPropertyChanged("ProgressVisibility");
+                    OnPropertyChanged("UpToDate");
+                    OnPropertyChanged("PlayIsEnabled");
+                    OnPropertyChanged("PathIsEnabled");
+                    OnPropertyChanged("VersionStatus");
+                } catch (WebException ex) {
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        var connectionFailure = new ConnectionFailure
+                        {
+                            textBlock1 =
+                            {
+                                Text =
+                                    "Could not connect to www.pokegen.ca, please try again later or check your internet settings."
+                            }
+                        };
+                        connectionFailure.Show();
+                        Application.Current.MainWindow.Close();
+                    }));
+                }
             }
         }
 
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
+        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
             var bytesIn = double.Parse(e.BytesReceived.ToString());
             var totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
-            var percentage = bytesIn / totalBytes * 100;
+            var percentage = bytesIn/totalBytes*100;
 
-            ProgressValue = BaseProgress + int.Parse(Math.Truncate(percentage / (NumFiles)).ToString());
+            ProgressValue = BaseProgress + int.Parse(Math.Truncate(percentage/(NumFiles)).ToString());
             UpdateStatus = "Installation is " + ProgressValue + "% Complete";
 
             OnPropertyChanged("ProgressValue");
             OnPropertyChanged("UpdateStatus");
         }
 
-        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
+        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e) {
             BaseProgress = ProgressValue;
             DownloadFile();
         }
 
-        private String CurrentRevision()
-        {
+        private String CurrentRevision() {
             if (!File.Exists(Path.Combine(SavePath, "PokeGen/version.txt"))) return "Unknown";
 
-            using (var streamReader = new StreamReader(Path.Combine(SavePath, "PokeGen/version.txt")))
-            {
+            using (var streamReader = new StreamReader(Path.Combine(SavePath, "PokeGen/version.txt"))) {
                 return streamReader.ReadToEnd();
             }
         }
 
-        private static String FindRevision()
-        {
+        private String FindRevision() {
             var webClient = new WebClient();
             var page = webClient.DownloadString("http://www.pokegen.ca/Release Build/PokeGen/version.txt");
             var sr = new StringReader(page);
@@ -362,9 +368,9 @@ namespace PokeGen.Model
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string property)
-        {
-            if(PropertyChanged != null)
+
+        private void OnPropertyChanged(string property) {
+            if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
     }
