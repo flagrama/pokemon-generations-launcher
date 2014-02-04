@@ -284,11 +284,28 @@ namespace PokeGen.Model
 
         private void DownloadFile() {
             if (_urlQueue.Any()) {
-                using (var webClient = new WebClient()) {
-                    webClient.DownloadProgressChanged += client_DownloadProgressChanged;
-                    webClient.DownloadFileCompleted += client_DownloadFileCompleted;
-                    webClient.DownloadFileAsync(new Uri(_urlQueue.Dequeue()), _urlPathQueue.Dequeue());
-                }
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    var acceptUpdate = new AcceptUpdateWindow();
+                    acceptUpdate.ShowDialog();
+                    if (acceptUpdate.DownloadUpdate) {
+                        using (var webClient = new WebClient()) {
+                            webClient.DownloadProgressChanged += client_DownloadProgressChanged;
+                            webClient.DownloadFileCompleted += client_DownloadFileCompleted;
+                            webClient.DownloadFileAsync(new Uri(_urlQueue.Dequeue()), _urlPathQueue.Dequeue());
+                        }
+                    } else {
+                        UpToDate = "PokeGen is not up to date";
+                        ProgressVisibility = Visibility.Hidden;
+                        UpdateStatus = "Update Canceled";
+                        PlayIsEnabled = true;
+
+                        OnPropertyChanged("UpToDate");
+                        OnPropertyChanged("ProgressVisibility");
+                        OnPropertyChanged("UpdateStatus");
+                        OnPropertyChanged("PlayIsEnabled");
+                    }
+                }));
             } else {
                 try {
                     UpdateStatus = "Labeling version...";

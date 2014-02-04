@@ -92,6 +92,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AcceptUpdateWindow.xaml.cs">
+      <DependentUpon>AcceptUpdateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConnectionFailure.xaml.cs">
       <DependentUpon>ConnectionFailure.xaml</DependentUpon>
     </Compile>
@@ -103,6 +106,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings1.settings</DependentUpon>
     </Compile>
+    <Page Include="AcceptUpdateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ConnectionFailure.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
