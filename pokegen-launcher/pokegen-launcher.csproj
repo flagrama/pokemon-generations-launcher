@@ -92,8 +92,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AcceptUpdateWindow.xaml.cs">
-      <DependentUpon>AcceptUpdateWindow.xaml</DependentUpon>
+    <Compile Include="YesNoDialog.xaml.cs">
+      <DependentUpon>YesNoDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConnectionFailure.xaml.cs">
       <DependentUpon>ConnectionFailure.xaml</DependentUpon>
@@ -106,7 +106,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings1.settings</DependentUpon>
     </Compile>
-    <Page Include="AcceptUpdateWindow.xaml">
+    <Page Include="YesNoDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

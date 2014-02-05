@@ -5,12 +5,12 @@ namespace PokeGen
     /// <summary>
     /// Interaction logic for AcceptUpdateWindow.xaml
     /// </summary>
-    public partial class AcceptUpdateWindow : Window {
-        public AcceptUpdateWindow() {
+    public partial class YesNoDialog : Window {
+        public YesNoDialog() {
             InitializeComponent();
         }
 
-        public bool DownloadUpdate { get; private set; }
+        public bool DownloadUpdate { get; set; }
 
         private void button1_Click(object sender, RoutedEventArgs e) {
             DownloadUpdate = true;
