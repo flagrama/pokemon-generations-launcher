@@ -28,6 +28,7 @@ namespace PokeGen.ViewModel {
             CloseCommand = new DelegateCommand(OnClose);
             MinimizeCommand = new DelegateCommand(OnMinimize);
             PlayCommand = new DelegateCommand(OnPlay);
+            RecheckCommand = new DelegateCommand(OnRecheck);
             OpenPathCommand = new DelegateCommand(OnOpenPath);
             MovePathCommand = new DelegateCommand(OnMovePath);
 
@@ -57,6 +58,7 @@ namespace PokeGen.ViewModel {
         public ICommand CloseCommand { get; private set; }
         public ICommand MinimizeCommand { get; private set; }
         public ICommand PlayCommand { get; private set; }
+        public ICommand RecheckCommand { get; private set; }
         public ICommand OpenPathCommand { get; private set; }
         public ICommand MovePathCommand { get; private set; }
         public ICommand NewsItem1Command { get; private set; }
@@ -128,6 +130,10 @@ namespace PokeGen.ViewModel {
                 ModelLauncher.StartCheckingFiles();
                 OnPropertyChanged("ModelLauncher");
             }
+        }
+
+        private void OnRecheck() {
+            _modelLauncher.RecheckPath();
         }
 
         private void OnOpenPath() {

@@ -25,6 +25,7 @@ namespace PokeGen.Model
         public string UpdateStatus { get; private set; }
         public Visibility ProgressVisibility { get; private set; }
         public bool PlayIsEnabled { get; private set; }
+        public bool RecheckIsEnabled { get; private set; }
         public bool PathIsEnabled { get; private set; }
         public string VersionStatus { get; private set; }
         public int ProgressValue { get; private set; }
@@ -64,11 +65,29 @@ namespace PokeGen.Model
         public void CheckPath() {
             var versionNumber = new String(CurrentRevision().Where(Char.IsDigit).ToArray());
             VersionStatus = "PokeGen Version: " + versionNumber;
+            RecheckIsEnabled = false;
 
             OnPropertyChanged("VersionStatus");
             OnPropertyChanged("SavePath");
+            OnPropertyChanged("RechekcIsEnabled");
 
             StartCheckingFiles();
+        }
+
+        public void RecheckPath()
+        {
+            UpToDate = String.Empty;
+            ProgressValue = 0;
+            NumFiles = 0;
+            BaseProgress = 0;
+
+            OnPropertyChanged("ProgressValue");
+            OnPropertyChanged("UpToDate");
+            OnPropertyChanged("SavePath");
+            OnPropertyChanged("NumFiles");
+            OnPropertyChanged("BaseProgress");
+
+            CheckPath();
         }
 
         public void MovePath() {
@@ -259,17 +278,22 @@ namespace PokeGen.Model
                         yesNoDialog.ShowDialog();
                         if (yesNoDialog.DownloadUpdate)
                         {
+                            RecheckIsEnabled = false;
+                            OnPropertyChanged("RecheckIsEnabled");
+
                             DownloadFile();
                         } else {
                             UpToDate = "PokeGen is not up to date";
                             ProgressVisibility = Visibility.Hidden;
                             UpdateStatus = "Update Canceled";
                             PlayIsEnabled = true;
+                            RecheckIsEnabled = true;
 
                             OnPropertyChanged("UpToDate");
                             OnPropertyChanged("ProgressVisibility");
                             OnPropertyChanged("UpdateStatus");
                             OnPropertyChanged("PlayIsEnabled");
+                            OnPropertyChanged("RecheckIsEnabled");
                         }
                     }));
             } else {

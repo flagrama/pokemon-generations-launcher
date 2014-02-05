@@ -59,6 +59,7 @@
         <Label Content="{Binding ModelLauncher.UpdateStatus, Mode=OneWay}" Canvas.Left="15" Canvas.Top="380" FontFamily="Power Red and Green" FontSize="15" Foreground="White" Height="29" Width="724" />
         <ProgressBar Visibility="{Binding ModelLauncher.ProgressVisibility, Mode=OneWay}" Value="{Binding ModelLauncher.ProgressValue, Mode=OneWay}" Canvas.Left="18" Canvas.Top="404" Height="18" Width="719" IsIndeterminate="False" IsEnabled="True" Background="#FF3E3E3E" BorderBrush="Black" BorderThickness="0" ClipToBounds="False" />
         <Label Content="{Binding ModelLauncher.UpToDate, Mode=OneWay}" Canvas.Left="39" Canvas.Top="399" FontFamily="Power Red and Green" FontSize="15" Foreground="#FFFFC700" Height="29" Width="701" FlowDirection="LeftToRight" HorizontalContentAlignment="Right" IsEnabled="True" />
-        <Button Command="{Binding PlayCommand}" IsEnabled="{Binding ModelLauncher.PlayIsEnabled, Mode=OneWay}"  Canvas.Left="750" Canvas.Top="358" Content="PLAY" Height="64" Width="76" Focusable="False" ToolTip="Play the Game!" FontSize="14" />
+        <Button Command="{Binding PlayCommand}" IsEnabled="{Binding ModelLauncher.PlayIsEnabled, Mode=OneWay}"  Canvas.Left="750" Canvas.Top="353" Content="PLAY" Height="45" Width="76" Focusable="False" ToolTip="Play the Game!" FontSize="14" />
+        <Button Command="{Binding RecheckCommand}" IsEnabled="{Binding ModelLauncher.RecheckIsEnabled, Mode=OneWay}"  Content="RECHECK" Canvas.Left="750" Canvas.Top="404" Width="76" Focusable="False" ToolTip="Check for update again!" FontSize="14"/>
     </Canvas>
 </Window>
