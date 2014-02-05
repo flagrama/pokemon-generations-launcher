@@ -8,10 +8,8 @@ using System.Windows.Input;
 using Microsoft.Practices.Prism.Commands;
 using PokeGen.Model;
 
-namespace PokeGen.ViewModel
-{
-    internal class MainWindowViewModel : INotifyPropertyChanged
-    {
+namespace PokeGen.ViewModel {
+    internal class MainWindowViewModel : INotifyPropertyChanged {
         private Launcher _modelLauncher;
 
         public Launcher ModelLauncher {
@@ -113,12 +111,15 @@ namespace PokeGen.ViewModel
                     Process.Start(gamePath);
                     Application.Current.Shutdown();
                 } catch {
-                    var connectionFailure = new ConnectionFailure
-                    {
+                    var connectionFailure = new ConnectionFailure {
                         label13 = {Content = "PokeGen.exe is invalid"},
-                        textBlock1 = { Text = "The file 'PokeGen.exe' is invalid. Try restarting the launcher, and if the problem persists, delete the file before restarting the launcher." },
+                        textBlock1 = {
+                            Text =
+                                "The file 'PokeGen.exe' is invalid. Try restarting the launcher, and if the problem persists, delete the file before restarting the launcher."
+                        },
                         button1 = {IsEnabled = false},
-                        button2 = {IsEnabled = false}
+                        button2 = {IsEnabled = false},
+                        Title = "Invalid Executable"
                     };
                     connectionFailure.ShowDialog();
                     Application.Current.MainWindow.Close();
@@ -135,7 +136,6 @@ namespace PokeGen.ViewModel
 
         private void OnMovePath() {
             ModelLauncher.MovePath();
-            ModelLauncher.CheckPath();
         }
 
         private void OnNewsItem1() {
