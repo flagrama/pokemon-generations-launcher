@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
+using System.Windows.Forms;
 
 namespace PokeGen
 {
@@ -15,7 +17,7 @@ namespace PokeGen
             Error,
         }
 
-        private StreamWriter file = new StreamWriter("launcher.log", true);
+        private readonly StreamWriter file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
 
         public void WriteLog(String message, Type type = Type.None) {
             if (type != Type.None) {
