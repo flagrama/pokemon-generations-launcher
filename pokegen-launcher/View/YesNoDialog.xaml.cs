@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PokeGen
+namespace PokeGen.View
 {
     /// <summary>
     /// Interaction logic for AcceptUpdateWindow.xaml
