@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using HtmlAgilityPack;
+using PokeGen.View;
 
 namespace PokeGen.Model {
     internal class Launcher : INotifyPropertyChanged {
@@ -214,7 +215,7 @@ namespace PokeGen.Model {
                         _appLog.WriteLog("Unable to get update files.", Logging.Type.Error);
 
                         Application.Current.Dispatcher.Invoke(new Action(() => {
-                            var connectionFailure = new ConnectionFailure {
+                            var connectionFailure = new View.ConnectionFailure {
                                 textBlock1 = {
                                     Text =
                                         "Could not connect to www.pokegen.ca, please try again later or check your internet settings."

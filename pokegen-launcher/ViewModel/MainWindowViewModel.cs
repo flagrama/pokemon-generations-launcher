@@ -100,7 +100,7 @@ namespace PokeGen.ViewModel {
                 OnPropertyChanged("ModelLauncher");
             } else {
                 AppLog.WriteLog("Internet connection not found.", Logging.Type.Error);
-                var connectionFailure = new ConnectionFailure();
+                var connectionFailure = new View.ConnectionFailure();
                 connectionFailure.ShowDialog();
                 AppLog.WriteLog("Shutting down application.");
                 Application.Current.Shutdown();
@@ -126,7 +126,7 @@ namespace PokeGen.ViewModel {
                     Application.Current.Shutdown();
                 } catch {
                     AppLog.WriteLog("The operating system cannot run the executable", Logging.Type.Error);
-                    var connectionFailure = new ConnectionFailure {
+                    var connectionFailure = new View.ConnectionFailure {
                         label13 = {Content = "PokeGen.exe is invalid"},
                         textBlock1 = {
                             Text =

@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using PokeGen.ViewModel;
 
-namespace PokeGen
+namespace PokeGen.View
 {
     public partial class MainWindow
     {
