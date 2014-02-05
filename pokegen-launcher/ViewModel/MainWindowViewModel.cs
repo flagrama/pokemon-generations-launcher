@@ -39,6 +39,7 @@ namespace PokeGen.ViewModel {
             NewsItem3Command = new DelegateCommand(OnNewsItem3);
 
             // External Link Commands
+            OpenDonateCommand = new DelegateCommand(OnOpenDonate);
             OpenModDbCommand = new DelegateCommand(OnOpenModDb);
             OpenTwitterCommand = new DelegateCommand(OnOpenTwitter);
             OpenForumCommand = new DelegateCommand(OnOpenForum);
@@ -68,6 +69,7 @@ namespace PokeGen.ViewModel {
         public ICommand NewsItem1Command { get; private set; }
         public ICommand NewsItem2Command { get; private set; }
         public ICommand NewsItem3Command { get; private set; }
+        public ICommand OpenDonateCommand { get; private set; }
         public ICommand OpenModDbCommand { get; private set; }
         public ICommand OpenTwitterCommand { get; private set; }
         public ICommand OpenForumCommand { get; private set; }
@@ -168,6 +170,10 @@ namespace PokeGen.ViewModel {
 
         private void OnNewsItem3() {
             Process.Start(ModelLauncher.NewsItemLink3);
+        }
+
+        private static void OnOpenDonate() {
+            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZJF34JJCMLAFN");
         }
 
         private static void OnOpenModDb() {
