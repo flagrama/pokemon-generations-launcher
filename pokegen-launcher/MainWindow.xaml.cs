@@ -79,6 +79,16 @@ namespace PokeGen
             NewsItem3.Foreground = newBrush;
         }
 
+        private void DonateImage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DonateImage.Opacity = 0.75;
+        }
+
+        private void DonateImage_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DonateImage.Opacity = 1;
+        }
+
         private void ModDbImage_MouseEnter(object sender, MouseEventArgs e) {
             ModDbImage.Opacity = 0.75;
         }
@@ -93,6 +103,16 @@ namespace PokeGen
 
         private void TwitterImage_MouseLeave(object sender, MouseEventArgs e) {
             TwitterImage.Opacity = 1;
+        }
+
+        private void ForumImage2_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ForumImage2.Opacity = 0.75;
+        }
+
+        private void ForumImage2_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ForumImage2.Opacity = 1;
         }
 
         private void mdbImg1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
