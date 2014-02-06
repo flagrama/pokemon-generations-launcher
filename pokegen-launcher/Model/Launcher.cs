@@ -18,7 +18,6 @@ namespace PokeGen.Model {
         private readonly Logging _appLog;
 
         private string VersionInfo { get; set; }
-        private bool UpdatePending { get; set; }
         private int NumFiles { get; set; }
         private int BaseProgress { get; set; }
         public String SavePath { get; set; }
@@ -451,11 +450,11 @@ namespace PokeGen.Model {
             {
                 if (update.CheckForUpdate()) {
                     PlayIsEnabled = false;
-                    UpToDate = "Launcher is downloading an update";
+                    UpToDate = "Currently downloading an update for the launcher";
                     OnPropertyChanged("PlayIsEnabled");
                     OnPropertyChanged("UpToDate");
                     update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
-                    UpToDate = "Please close the launcher";
+                    UpToDate = "Please close the window to finish updating the launcher";
                     OnPropertyChanged("UpToDate");
                 }
             }
