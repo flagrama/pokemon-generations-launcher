@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pokegen-launcher", "pokegen-launcher\pokegen-launcher.csproj", "{FFCD4DDD-2D84-44C3-B99A-D3515C86EED1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pokegen-launcher-updater", "pokegen-launcher-updater\pokegen-launcher-updater.csproj", "{50FC08D6-7982-4128-BB4C-4F618E79FE00}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18C938EA-5E18-4885-8873-7DC30193F6AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,12 +14,11 @@ Global
 		{FFCD4DDD-2D84-44C3-B99A-D3515C86EED1}.Debug|x86.Build.0 = Debug|x86
 		{FFCD4DDD-2D84-44C3-B99A-D3515C86EED1}.Release|x86.ActiveCfg = Release|x86
 		{FFCD4DDD-2D84-44C3-B99A-D3515C86EED1}.Release|x86.Build.0 = Release|x86
-		{50FC08D6-7982-4128-BB4C-4F618E79FE00}.Debug|x86.ActiveCfg = Debug|x86
-		{50FC08D6-7982-4128-BB4C-4F618E79FE00}.Debug|x86.Build.0 = Debug|x86
-		{50FC08D6-7982-4128-BB4C-4F618E79FE00}.Release|x86.ActiveCfg = Release|x86
-		{50FC08D6-7982-4128-BB4C-4F618E79FE00}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
