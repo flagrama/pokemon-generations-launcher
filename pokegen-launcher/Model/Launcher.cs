@@ -451,13 +451,13 @@ namespace PokeGen.Model {
                 if (!update.CheckForUpdate()) return;
                 PlayIsEnabled = false;
                 RecheckIsEnabled = false;
-                UpToDate = "Currently downloading an update for the launcher";
+                UpdateStatus = "Currently downloading an update for the launcher";
                 OnPropertyChanged("PlayIsEnabled");
                 OnPropertyChanged("RecheckIsEnabled");
-                OnPropertyChanged("UpToDate");
+                OnPropertyChanged("UpdateStatus");
                 update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
-                UpToDate = "Please close the window to finish updating the launcher";
-                OnPropertyChanged("UpToDate");
+                UpdateStatus = "Please close the window to finish updating the launcher";
+                OnPropertyChanged("UpdateStatus");
             }
             catch (Exception ex)
             {
