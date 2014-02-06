@@ -95,6 +95,22 @@ namespace PokeGen.ViewModel {
                     ModelLauncher.ChoosePath();
                 }
 
+                var update = new Update(AppLog);
+
+                try {
+                    if (update.CheckForUpdate()) {
+                        update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                        AppLog.WriteLog("Shutting down application.");
+                        Application.Current.Shutdown();
+                        return;
+                    }
+                } catch (NullReferenceException) {
+                    AppLog.WriteLog("Application path is null.", Logging.Type.Error);
+                    AppLog.WriteLog("This should not happen.");
+                    AppLog.WriteLog("Shutting down application.");
+                    Application.Current.Shutdown();
+                }
+
                 ModelLauncher.LoadNews();
                 ModelLauncher.FindImages();
                 ModelLauncher.CheckPath();

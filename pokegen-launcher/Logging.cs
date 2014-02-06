@@ -17,15 +17,15 @@ namespace PokeGen
             Error,
         }
 
-        private readonly StreamWriter file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
+        private readonly StreamWriter _file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
 
         public void WriteLog(String message, Type type = Type.None) {
             if (type != Type.None) {
-                file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
+                _file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
             } else {
-                file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
+                _file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
             }
-            file.Flush();
+            _file.Flush();
         }
     }
 }

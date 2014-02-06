@@ -15,7 +15,7 @@ namespace PokeGen.Model {
     internal class Launcher : INotifyPropertyChanged {
         private readonly Queue<String> _directoryQueue = new Queue<string>();
         private readonly Queue<String> _fileQueue = new Queue<string>();
-        private Logging _appLog;
+        private readonly Logging _appLog;
 
         private string VersionInfo { get; set; }
         private int NumFiles { get; set; }

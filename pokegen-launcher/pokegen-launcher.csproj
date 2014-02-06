@@ -56,6 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>PokeGenIconBig.ico</ApplicationIcon>
@@ -69,7 +70,7 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism">
-      <HintPath>..\packages\Prism.4.1\Desktop\Microsoft.Practices.Prism.dll</HintPath>
+      <HintPath>..\packages\Prism4.1\Desktop\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -93,6 +94,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Logging.cs" />
+    <Compile Include="Update.cs" />
     <Compile Include="View\YesNoDialog.xaml.cs">
       <DependentUpon>YesNoDialog.xaml</DependentUpon>
     </Compile>
