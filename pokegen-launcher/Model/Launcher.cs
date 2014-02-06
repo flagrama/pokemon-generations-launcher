@@ -18,6 +18,7 @@ namespace PokeGen.Model {
         private readonly Logging _appLog;
 
         private string VersionInfo { get; set; }
+        private bool UpdatePending { get; set; }
         private int NumFiles { get; set; }
         private int BaseProgress { get; set; }
         public String SavePath { get; set; }
@@ -211,6 +212,7 @@ namespace PokeGen.Model {
                 (sender, e) => {
                     try {
                         GetUpdateFiles("http://www.pokegen.ca/Release Build/PokeGen/", "");
+                        RunUpdate();
                     } catch (Exception ex) {
                         _appLog.WriteLog("Unable to get update files.", Logging.Type.Error);
 
@@ -440,6 +442,28 @@ namespace PokeGen.Model {
         private void OnPropertyChanged(string property) {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void RunUpdate()
+        {
+            var update = new Update(_appLog);
+            try
+            {
+                if (update.CheckForUpdate()) {
+                    PlayIsEnabled = false;
+                    UpToDate = "Launcher is downloading an update";
+                    OnPropertyChanged("PlayIsEnabled");
+                    OnPropertyChanged("UpToDate");
+                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                    UpToDate = "Please close the launcher";
+                    OnPropertyChanged("UpToDate");
+                }
+            }
+            catch (Exception ex)
+            {
+                _appLog.WriteLog("Application path is null.", Logging.Type.Error);
+                _appLog.WriteLog("This should not happen.");
+            }
         }
     }
 }
