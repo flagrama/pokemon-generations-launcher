@@ -133,10 +133,11 @@ namespace PokeGen
                 streamWriter.WriteLine("if exist \"PokeGen.exe\" goto Repeat");
                 streamWriter.WriteLine("for /f \"delims==\" %%F in ('dir /b') do if not \"%%~xF\"==\".new\" (if not \"%%~xF\"==\".bat\" (if not \"%%~xF\"==\".log\" (del /Q \"%%~nxF\")))");
                 streamWriter.WriteLine("for /f \"delims==\" %%F in ('dir /b *.new') do (ren \"%%~nxF\" \"%%~nF\")");
+                streamWriter.WriteLine("start PokeGen.exe");
                 streamWriter.WriteLine("del \"launcher.bat\"");
             }
             var process = new ProcessStartInfo {
-                CreateNoWindow = false,
+                CreateNoWindow = true,
                 UseShellExecute = false,
                 FileName = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.bat"),
                 WindowStyle = ProcessWindowStyle.Hidden
