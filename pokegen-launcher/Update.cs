@@ -135,12 +135,17 @@ namespace PokeGen
                 streamWriter.WriteLine("for /f \"delims==\" %%F in ('dir /b *.new') do (ren \"%%~nxF\" \"%%~nF\")");
                 streamWriter.WriteLine("del \"launcher.bat\"");
             }
-            var process = new ProcessStartInfo();
-            process.CreateNoWindow = false;
-            process.UseShellExecute = false;
-            process.FileName = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.bat");
-            process.WindowStyle = ProcessWindowStyle.Hidden;
-            Process.Start(process);
+            var process = new ProcessStartInfo {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.bat"),
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            try {
+                Process.Start(process);
+            } catch {
+                _appLog.WriteLog("Unable to start launcher.bat to update.", Logging.Type.Error);
+            }
         }
     }
 }
