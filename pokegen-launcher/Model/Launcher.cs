@@ -448,15 +448,16 @@ namespace PokeGen.Model {
             var update = new Update(_appLog);
             try
             {
-                if (update.CheckForUpdate()) {
-                    PlayIsEnabled = false;
-                    UpToDate = "Currently downloading an update for the launcher";
-                    OnPropertyChanged("PlayIsEnabled");
-                    OnPropertyChanged("UpToDate");
-                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
-                    UpToDate = "Please close the window to finish updating the launcher";
-                    OnPropertyChanged("UpToDate");
-                }
+                if (!update.CheckForUpdate()) return;
+                PlayIsEnabled = false;
+                RecheckIsEnabled = false;
+                UpToDate = "Currently downloading an update for the launcher";
+                OnPropertyChanged("PlayIsEnabled");
+                OnPropertyChanged("RecheckIsEnabled");
+                OnPropertyChanged("UpToDate");
+                update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                UpToDate = "Please close the window to finish updating the launcher";
+                OnPropertyChanged("UpToDate");
             }
             catch (Exception ex)
             {
