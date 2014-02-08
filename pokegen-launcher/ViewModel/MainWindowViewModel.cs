@@ -129,8 +129,9 @@ namespace PokeGen.ViewModel {
                     Process.Start(gamePath);
                     AppLog.WriteLog("Shutting down application.");
                     Application.Current.Shutdown();
-                } catch {
+                } catch (Exception ex) {
                     AppLog.WriteLog("The operating system cannot run the executable", Logging.Type.Error);
+                    AppLog.WriteLog(ex.Message, Logging.Type.Error);
                     var connectionFailure = new View.ConnectionFailure {
                         label13 = {Content = "PokeGen.exe is invalid"},
                         textBlock1 = {

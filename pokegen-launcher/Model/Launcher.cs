@@ -109,15 +109,17 @@ namespace PokeGen.Model {
                 try {
                     Directory.Move(src, dir);
                     SavePath = dialog.SelectedPath;
-                } catch {
+                } catch (Exception ex) {
                     try {
                         _appLog.WriteLog("Trying to delete existing directory.", Logging.Type.Warning);
+                        _appLog.WriteLog(ex.Message, Logging.Type.Warning);
 
                         Directory.Delete(dir, true);
                         Directory.Move(src, dir);
                         SavePath = dialog.SelectedPath;
-                    } catch {
+                    } catch (Exception ex2) {
                         _appLog.WriteLog("Failed to move files to new directory.", Logging.Type.Error);
+                        _appLog.WriteLog(ex2.Message, Logging.Type.Error);
                     }
                 }
             }
@@ -214,6 +216,7 @@ namespace PokeGen.Model {
                         RunUpdate();
                     } catch (Exception ex) {
                         _appLog.WriteLog("Unable to get update files.", Logging.Type.Error);
+                        _appLog.WriteLog(ex.Message, Logging.Type.Error);
 
                         Application.Current.Dispatcher.Invoke(new Action(() => {
                             var connectionFailure = new View.ConnectionFailure {
@@ -231,8 +234,9 @@ namespace PokeGen.Model {
 
             try {
                 backgroundWorker.RunWorkerAsync();
-            } catch {
+            } catch (Exception ex) {
                 _appLog.WriteLog("Unable to run background worker.", Logging.Type.Error);
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
                 var connectionFailure = new ConnectionFailure();
                 connectionFailure.ShowDialog();
                 _appLog.WriteLog("Shutting down application.");
@@ -250,8 +254,9 @@ namespace PokeGen.Model {
                 doc.LoadHtml(client.DownloadString(new Uri("http://www.pokegen.ca/Release Build/PokeGen/version.txt")));
                 if (!string.IsNullOrEmpty(doc.DocumentNode.InnerText))
                     VersionInfo = doc.DocumentNode.InnerText;
-            } catch {
+            } catch (Exception ex) {
                 _appLog.WriteLog("Unable to retrieve version.txt and hash values.", Logging.Type.Error);
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
 
@@ -418,8 +423,9 @@ namespace PokeGen.Model {
                 var revisionNum = sr.ReadLine();
 
                 return revisionNum;
-            } catch {
+            } catch (Exception ex) {
                 _appLog.WriteLog("Unable to retrive version number from website.", Logging.Type.Error);
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
                 Application.Current.Dispatcher.Invoke(new Action(() => {
                     var connectionFailure = new ConnectionFailure {
                         textBlock1 = {
@@ -443,7 +449,7 @@ namespace PokeGen.Model {
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
 
-        public void RunUpdate()
+        private void RunUpdate()
         {
             var update = new Update(_appLog);
             try
@@ -463,6 +469,7 @@ namespace PokeGen.Model {
             {
                 _appLog.WriteLog("Application path is null.", Logging.Type.Error);
                 _appLog.WriteLog("This should not happen.");
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
     }
