@@ -43,6 +43,7 @@ namespace PokeGen
                 }
             } catch (Exception ex){
                 _appLog.WriteLog("Unable to reach web server", Logging.Type.Error);
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
             }
 
             if (!File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "version.txt"))) {
@@ -144,8 +145,9 @@ namespace PokeGen
             };
             try {
                 Process.Start(process);
-            } catch {
+            } catch (Exception ex) {
                 _appLog.WriteLog("Unable to start launcher.bat to update.", Logging.Type.Error);
+                _appLog.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
     }
