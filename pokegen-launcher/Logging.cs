@@ -17,15 +17,72 @@ namespace PokeGen
             Error,
         }
 
-        private readonly StreamWriter _file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
+        //private readonly StreamWriter _file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
 
         public void WriteLog(String message, Type type = Type.None) {
-            if (type != Type.None) {
-                _file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
-            } else {
-                _file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
+            try {
+                var file =
+                    new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"),
+                        true);
+                if (type != Type.None) {
+                    file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
+                } else {
+                    file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
+                }
+                file.Flush();
+                file.Close();
+            } catch {
+                // Launch itself as administrator
+                var proc = new ProcessStartInfo {
+                    UseShellExecute = true,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                    FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
+                    Verb = "runas"
+                };
+                
+                Process.Start(proc);
+
+                var file =
+                    new StreamWriter(
+                        Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"),
+                        true);
+                if (type != Type.None) {
+                    file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
+                } else {
+                    file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
+                }
+                file.Flush();
+                file.Close();
             }
-            _file.Flush();
         }
+
+        /* Application Data launcher.log file
+        if (
+            !Directory.Exists(
+                Path.Combine(
+                    Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)),
+                    "Roaming",
+                    "PokeGen"))) {
+            Directory.CreateDirectory(
+                Path.Combine(
+                    Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)),
+                    "Roaming",
+                    "PokeGen"));
+        }
+        var file =
+            new StreamWriter(
+                Path.Combine(Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)),
+                "Roaming", 
+                "PokeGen", 
+                "launcher.log"),
+                true);
+        if (type != Type.None) {
+            file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + type + ": " + message);
+        } else {
+            file.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "]" + " " + message);
+        }
+        file.Flush();
+        file.Close();
+         */
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using HtmlAgilityPack;
@@ -219,7 +221,7 @@ namespace PokeGen.Model {
                         _appLog.WriteLog(ex.Message, Logging.Type.Error);
 
                         Application.Current.Dispatcher.Invoke(new Action(() => {
-                            var connectionFailure = new View.ConnectionFailure {
+                            var connectionFailure = new ConnectionFailure {
                                 textBlock1 = {
                                     Text =
                                         "Could not connect to www.pokegen.ca, please try again later or check your internet settings."
@@ -311,11 +313,11 @@ namespace PokeGen.Model {
 
                         DownloadFile();
                     } else {
-                        _appLog.WriteLog("User declined downloading new files", Logging.Type.Notice);
+                        _appLog.WriteLog("User declined downloading new files.", Logging.Type.Notice);
                         _appLog.WriteLog("Application is up to date.", Logging.Type.Notice);
                         UpToDate = "PokeGen is not up to date";
                         ProgressVisibility = Visibility.Hidden;
-                        UpdateStatus = "Update Canceled";
+                        UpdateStatus = "Update Canceled...";
                         PlayIsEnabled = true;
                         RecheckIsEnabled = true;
 
@@ -457,13 +459,28 @@ namespace PokeGen.Model {
                 if (!update.CheckForUpdate()) return;
                 PlayIsEnabled = false;
                 RecheckIsEnabled = false;
-                UpdateStatus = "Currently downloading an update for the launcher";
+                UpdateStatus = "Currently downloading an update for the launcher...";
                 OnPropertyChanged("PlayIsEnabled");
                 OnPropertyChanged("RecheckIsEnabled");
                 OnPropertyChanged("UpdateStatus");
-                update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
-                UpdateStatus = "Please close the window to finish updating the launcher";
-                OnPropertyChanged("UpdateStatus");
+                try {
+                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                } catch {
+                    var proc = new ProcessStartInfo {
+                        UseShellExecute = true,
+                        WorkingDirectory = Environment.CurrentDirectory,
+                        FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
+                        Verb = "runas"
+                    };
+                    _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                    Process.Start(proc);
+
+                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                }
+
+                _appLog.WriteLog("Restarting application to apply update.");
+
+                Environment.Exit(Environment.ExitCode); // Quit itself
             }
             catch (Exception ex)
             {

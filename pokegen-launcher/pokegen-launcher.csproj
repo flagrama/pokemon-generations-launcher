@@ -93,7 +93,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Permissions\Elevation.cs" />
     <Compile Include="Logging.cs" />
+    <Compile Include="Permissions\NativeMethods.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="View\YesNoDialog.xaml.cs">
       <DependentUpon>YesNoDialog.xaml</DependentUpon>
