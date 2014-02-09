@@ -141,6 +141,7 @@ namespace PokeGen
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 FileName = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.bat"),
+                Verb = "runas",
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             try {
