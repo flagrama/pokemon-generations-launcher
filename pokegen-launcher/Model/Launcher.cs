@@ -199,6 +199,7 @@ namespace PokeGen.Model {
         }
 
         public void StartCheckingFiles() {
+            RunUpdate();
             _appLog.WriteLog("Calculating differences.", Logging.Type.Notice);
 
             var backgroundWorker = new BackgroundWorker();
@@ -215,7 +216,6 @@ namespace PokeGen.Model {
                 (sender, e) => {
                     try {
                         GetUpdateFiles("http://www.pokegen.ca/Release Build/PokeGen/", "");
-                        RunUpdate();
                     } catch (Exception ex) {
                         _appLog.WriteLog("Unable to get update files.", Logging.Type.Error);
                         _appLog.WriteLog(ex.Message, Logging.Type.Error);
