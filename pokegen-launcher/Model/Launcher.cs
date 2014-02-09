@@ -360,7 +360,21 @@ namespace PokeGen.Model {
             Properties.Settings.Default.Save();
             UpdateStatus = String.Empty;
 
-            File.Delete(SavePath + "/PokeGen/" + "version.txt");
+            try {
+                File.Delete(SavePath + "/PokeGen/" + "version.txt");
+            } catch {
+                var proc = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                    FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
+                    Verb = "runas"
+                };
+                _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                Process.Start(proc);
+
+                File.Delete(SavePath + "/PokeGen/" + "version.txt");
+            }
             var sw = File.CreateText(SavePath + "/PokeGen/" + "/version.txt");
             sw.Write(Properties.Settings.Default.revision);
             sw.Close();
@@ -385,8 +399,25 @@ namespace PokeGen.Model {
                 using (var webClient = new WebClient()) {
                     webClient.DownloadProgressChanged += client_DownloadProgressChanged;
                     webClient.DownloadFileCompleted += client_DownloadFileCompleted;
-                    webClient.DownloadFileAsync(new Uri(_fileQueue.Peek()),
-                        SavePath + _fileQueue.Dequeue().Substring(35));
+
+                    try {
+                        webClient.DownloadFileAsync(new Uri(_fileQueue.Peek()),
+                            SavePath + _fileQueue.Peek().Substring(35));
+                    } catch {
+                        var proc = new ProcessStartInfo {
+                            UseShellExecute = true,
+                            WorkingDirectory = Environment.CurrentDirectory,
+                            FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
+                            Verb = "runas"
+                        };
+                        _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                        Process.Start(proc);
+
+                        webClient.DownloadFileAsync(new Uri(_fileQueue.Peek()),
+                            SavePath + _fileQueue.Peek().Substring(35));
+                    } finally {
+                        _fileQueue.Dequeue();
+                    }
                 }
             } else {
                 ShowUpToDate();
