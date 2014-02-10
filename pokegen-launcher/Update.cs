@@ -35,7 +35,7 @@ namespace PokeGen
 
             try {
                 using (var webClient = new WebClient()) {
-                    htmlDocument.LoadHtml(webClient.DownloadString("http://www.flagrama.com/pokegen-launcher/version.txt"));
+                    htmlDocument.LoadHtml(webClient.DownloadString("http://www.pokegen.ca/Release Build/Launcher/version.txt"));
                 }
                 if (!String.IsNullOrEmpty(htmlDocument.DocumentNode.InnerText)) {
                     _appLog.WriteLog("Remote launcher version found.", Logging.Type.Notice);

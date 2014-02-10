@@ -37,5 +37,5 @@ _ReSharper*/
 *.[Pp]ublish.xml
 [Tt]humbs.db
 [Pp]ackages/
-syntax: regexp
+*.vsp
 Setup/Setup/Express/*
