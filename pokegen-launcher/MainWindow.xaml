@@ -35,6 +35,7 @@
         <Label Content="{Binding ModelLauncher.NewsItemDate1, Mode=OneWay}" Canvas.Left="643" Canvas.Top="82" Cursor="Arrow" FlowDirection="LeftToRight" FontFamily="Power Red and Green" FontSize="13" Foreground="#FFD1D1D1" Height="25" HorizontalContentAlignment="Right" Name="label10" Width="147" />
         <Label Content="{Binding ModelLauncher.NewsItemDate2, Mode=OneWay}" Canvas.Left="643" Canvas.Top="109" Cursor="Arrow" FlowDirection="LeftToRight" FontFamily="Power Red and Green" FontSize="13" Foreground="#FFD1D1D1" Height="25" HorizontalContentAlignment="Right" Name="label11" Width="147" />
         <Label Content="{Binding ModelLauncher.NewsItemDate3, Mode=OneWay}" Canvas.Left="643" Canvas.Top="136" Cursor="Arrow" FlowDirection="LeftToRight" FontFamily="Power Red and Green" FontSize="13" Foreground="#FFD1D1D1" Height="25" HorizontalContentAlignment="Right" Name="label12" Width="147" />
+        <!-- [15:04] <@Xatoku> FlagWork, when you get a chance actually, delete the PayPal button.  YouTube thread is giving me cold feet, hah.
         <Image MouseEnter="DonateImage_MouseEnter" MouseLeave="DonateImage_MouseLeave" Canvas.Left="627" Canvas.Top="166" Height="16" Name="DonateImage" Stretch="Fill" Width="49" Source="/PokeGen;component/Images/btn_donate_SM.gif" Cursor="Hand" ToolTip="Donate to Xatoku Productions!">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseLeftButtonDown">
@@ -42,6 +43,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Image>
+        -->
         <Image MouseEnter="ModDbImage_MouseEnter" MouseLeave="ModDbImage_MouseLeave" Canvas.Left="682" Canvas.Top="164" Cursor="Hand" Height="20" Name="ModDbImage" OpacityMask="#FF781E00" Stretch="Uniform" ToolTip="Visit Mod DB!" Width="57" Source="/PokeGen;component/Images/moddb_logo.png">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseLeftButtonDown">
