@@ -38,4 +38,4 @@ _ReSharper*/
 [Tt]humbs.db
 [Pp]ackages/
 *.vsp
-Setup/Setup/Express/*
+Setup/*

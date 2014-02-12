@@ -79,15 +79,15 @@ namespace PokeGen
             NewsItem3.Foreground = newBrush;
         }
 
-        private void DonateImage_MouseEnter(object sender, MouseEventArgs e)
-        {
-            DonateImage.Opacity = 0.75;
-        }
+        //private void DonateImage_MouseEnter(object sender, MouseEventArgs e)
+        //{
+        //    DonateImage.Opacity = 0.75;
+        //}
 
-        private void DonateImage_MouseLeave(object sender, MouseEventArgs e)
-        {
-            DonateImage.Opacity = 1;
-        }
+        //private void DonateImage_MouseLeave(object sender, MouseEventArgs e)
+        //{
+        //    DonateImage.Opacity = 1;
+        //}
 
         private void ModDbImage_MouseEnter(object sender, MouseEventArgs e) {
             ModDbImage.Opacity = 0.75;
