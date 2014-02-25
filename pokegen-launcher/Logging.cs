@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace PokeGen
 {
-    class Logging {
+    static class Logging {
         public enum Type {
             None,
             Notice,
@@ -19,7 +19,7 @@ namespace PokeGen
 
         //private readonly StreamWriter _file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
 
-        public void WriteLog(String message, Type type = Type.None) {
+        public static void WriteLog(String message, Type type = Type.None) {
             try {
                 var file =
                     new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"),

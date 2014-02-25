@@ -17,7 +17,6 @@ namespace PokeGen.Model {
     internal class Launcher : INotifyPropertyChanged {
         private readonly Queue<String> _directoryQueue = new Queue<string>();
         private readonly Queue<String> _fileQueue = new Queue<string>();
-        private readonly Logging _appLog;
 
         private string VersionInfo { get; set; }
         private int NumFiles { get; set; }
@@ -47,8 +46,7 @@ namespace PokeGen.Model {
         public String NewsPicLink2 { get; private set; }
         public String NewsPicLink3 { get; private set; }
 
-        public Launcher(Logging appLog) {
-            _appLog = appLog;
+        public Launcher() {
         }
 
         public void ChoosePath() {
@@ -63,13 +61,13 @@ namespace PokeGen.Model {
 
                 OnPropertyChanged("SavePath");
             } else {
-                _appLog.WriteLog("Shutting down application.");
+                Logging.WriteLog("Shutting down application.");
                 Application.Current.Shutdown();
             }
         }
 
         public void CheckPath() {
-            _appLog.WriteLog("Starting initial check of file differences.", Logging.Type.Notice);
+            Logging.WriteLog("Starting initial check of file differences.", Logging.Type.Notice);
 
             var versionNumber = new String(CurrentRevision().Where(Char.IsDigit).ToArray());
             VersionStatus = "PokeGen Version: " + versionNumber;
@@ -83,7 +81,7 @@ namespace PokeGen.Model {
         }
 
         public void RecheckPath() {
-            _appLog.WriteLog("Starting recheck of file differences", Logging.Type.Notice);
+            Logging.WriteLog("Starting recheck of file differences", Logging.Type.Notice);
 
             UpToDate = String.Empty;
             ProgressValue = 0;
@@ -99,7 +97,7 @@ namespace PokeGen.Model {
         }
 
         public void MovePath() {
-            _appLog.WriteLog("Starting moving of files to new directory.", Logging.Type.Notice);
+            Logging.WriteLog("Starting moving of files to new directory.", Logging.Type.Notice);
 
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
 
@@ -113,20 +111,20 @@ namespace PokeGen.Model {
                     SavePath = dialog.SelectedPath;
                 } catch (Exception ex) {
                     try {
-                        _appLog.WriteLog("Trying to delete existing directory.", Logging.Type.Warning);
-                        _appLog.WriteLog(ex.Message, Logging.Type.Warning);
+                        Logging.WriteLog("Trying to delete existing directory.", Logging.Type.Warning);
+                        Logging.WriteLog(ex.Message, Logging.Type.Warning);
 
                         Directory.Delete(dir, true);
                         Directory.Move(src, dir);
                         SavePath = dialog.SelectedPath;
                     } catch (Exception ex2) {
-                        _appLog.WriteLog("Failed to move files to new directory.", Logging.Type.Error);
-                        _appLog.WriteLog(ex2.Message, Logging.Type.Error);
+                        Logging.WriteLog("Failed to move files to new directory.", Logging.Type.Error);
+                        Logging.WriteLog(ex2.Message, Logging.Type.Error);
                     }
                 }
             }
 
-            _appLog.WriteLog("Finished moving files to new directory.", Logging.Type.Notice);
+            Logging.WriteLog("Finished moving files to new directory.", Logging.Type.Notice);
 
             Properties.Settings.Default.pathName = SavePath;
             Properties.Settings.Default.Save();
@@ -200,7 +198,7 @@ namespace PokeGen.Model {
 
         public void StartCheckingFiles() {
             RunUpdate();
-            _appLog.WriteLog("Calculating differences.", Logging.Type.Notice);
+            Logging.WriteLog("Calculating differences.", Logging.Type.Notice);
 
             var backgroundWorker = new BackgroundWorker();
 
@@ -217,8 +215,8 @@ namespace PokeGen.Model {
                     try {
                         GetUpdateFiles("http://www.pokegen.ca/Release Build/PokeGen/", "");
                     } catch (Exception ex) {
-                        _appLog.WriteLog("Unable to get update files.", Logging.Type.Error);
-                        _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                        Logging.WriteLog("Unable to get update files.", Logging.Type.Error);
+                        Logging.WriteLog(ex.Message, Logging.Type.Error);
 
                         Application.Current.Dispatcher.Invoke(new Action(() => {
                             var connectionFailure = new ConnectionFailure {
@@ -237,17 +235,17 @@ namespace PokeGen.Model {
             try {
                 backgroundWorker.RunWorkerAsync();
             } catch (Exception ex) {
-                _appLog.WriteLog("Unable to run background worker.", Logging.Type.Error);
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Unable to run background worker.", Logging.Type.Error);
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
                 var connectionFailure = new ConnectionFailure();
                 connectionFailure.ShowDialog();
-                _appLog.WriteLog("Shutting down application.");
+                Logging.WriteLog("Shutting down application.");
                 Application.Current.Shutdown();
             }
         }
 
         private void GetVersionFileInfo() {
-            _appLog.WriteLog("Retrieving version.txt and hash values.", Logging.Type.Notice);
+            Logging.WriteLog("Retrieving version.txt and hash values.", Logging.Type.Notice);
 
             var client = new WebClient();
 
@@ -257,14 +255,14 @@ namespace PokeGen.Model {
                 if (!string.IsNullOrEmpty(doc.DocumentNode.InnerText))
                     VersionInfo = doc.DocumentNode.InnerText;
             } catch (Exception ex) {
-                _appLog.WriteLog("Unable to retrieve version.txt and hash values.", Logging.Type.Error);
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Unable to retrieve version.txt and hash values.", Logging.Type.Error);
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
 
 
         private void GetUpdateFiles(string downloadPath, string previousLink) {
-            _appLog.WriteLog("Getting files that need updated.", Logging.Type.Notice);
+            Logging.WriteLog("Getting files that need updated.", Logging.Type.Notice);
 
             while (true) {
                 var webClient = new WebClient();
@@ -300,21 +298,21 @@ namespace PokeGen.Model {
             }
 
             if (_fileQueue.Any()) {
-                _appLog.WriteLog("Found files that need updated.", Logging.Type.Notice);
+                Logging.WriteLog("Found files that need updated.", Logging.Type.Notice);
                 Application.Current.Dispatcher.Invoke(new Action(() => {
                     var yesNoDialog = new YesNoDialog();
                     yesNoDialog.ShowDialog();
                     if (yesNoDialog.DownloadUpdate) {
-                        _appLog.WriteLog("User accepted downloading new files.", Logging.Type.Notice);
+                        Logging.WriteLog("User accepted downloading new files.", Logging.Type.Notice);
                         RecheckIsEnabled = false;
                         OnPropertyChanged("RecheckIsEnabled");
 
-                        _appLog.WriteLog("Downloading updated files.", Logging.Type.Notice);
+                        Logging.WriteLog("Downloading updated files.", Logging.Type.Notice);
 
                         DownloadFile();
                     } else {
-                        _appLog.WriteLog("User declined downloading new files.", Logging.Type.Notice);
-                        _appLog.WriteLog("Application is up to date.", Logging.Type.Notice);
+                        Logging.WriteLog("User declined downloading new files.", Logging.Type.Notice);
+                        Logging.WriteLog("Application is up to date.", Logging.Type.Notice);
                         UpToDate = "PokeGen is not up to date";
                         ProgressVisibility = Visibility.Hidden;
                         UpdateStatus = "Update Canceled...";
@@ -352,7 +350,7 @@ namespace PokeGen.Model {
         }
 
         private void ShowUpToDate() {
-            _appLog.WriteLog("No files found that need updated.", Logging.Type.Notice);
+            Logging.WriteLog("No files found that need updated.", Logging.Type.Notice);
 
             UpdateStatus = "Labeling version...";
             ProgressVisibility = Visibility.Hidden;
@@ -370,7 +368,7 @@ namespace PokeGen.Model {
                     FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
                     Verb = "runas"
                 };
-                _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                Logging.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
                 Process.Start(proc);
 
                 File.Delete(SavePath + "/PokeGen/" + "version.txt");
@@ -410,7 +408,7 @@ namespace PokeGen.Model {
                             FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
                             Verb = "runas"
                         };
-                        _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                        Logging.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
                         Process.Start(proc);
 
                         webClient.DownloadFileAsync(new Uri(_fileQueue.Peek()),
@@ -438,7 +436,7 @@ namespace PokeGen.Model {
         }
 
         private String CurrentRevision() {
-            _appLog.WriteLog("Getting user's current version number.", Logging.Type.Notice);
+            Logging.WriteLog("Getting user's current version number.", Logging.Type.Notice);
             if (!File.Exists(Path.Combine(SavePath, "PokeGen/version.txt"))) return "Unknown";
 
             using (var streamReader = new StreamReader(Path.Combine(SavePath, "PokeGen/version.txt"))) {
@@ -447,7 +445,7 @@ namespace PokeGen.Model {
         }
 
         private String FindRevision() {
-            _appLog.WriteLog("Getting website's current version number.", Logging.Type.Notice);
+            Logging.WriteLog("Getting website's current version number.", Logging.Type.Notice);
 
             var webClient = new WebClient();
             try {
@@ -457,8 +455,8 @@ namespace PokeGen.Model {
 
                 return revisionNum;
             } catch (Exception ex) {
-                _appLog.WriteLog("Unable to retrive version number from website.", Logging.Type.Error);
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Unable to retrive version number from website.", Logging.Type.Error);
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
                 Application.Current.Dispatcher.Invoke(new Action(() => {
                     var connectionFailure = new ConnectionFailure {
                         textBlock1 = {
@@ -484,7 +482,7 @@ namespace PokeGen.Model {
 
         private void RunUpdate()
         {
-            var update = new Update(_appLog);
+            var update = new Update();
             try
             {
                 if (!update.CheckForUpdate()) return;
@@ -503,21 +501,21 @@ namespace PokeGen.Model {
                         FileName = System.Reflection.Assembly.GetExecutingAssembly().Location,
                         Verb = "runas"
                     };
-                    _appLog.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
+                    Logging.WriteLog("Elevating permissions to download update.", Logging.Type.Notice);
                     Process.Start(proc);
 
                     update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
                 }
 
-                _appLog.WriteLog("Restarting application to apply update.");
+                Logging.WriteLog("Restarting application to apply update.");
 
                 Environment.Exit(Environment.ExitCode); // Quit itself
             }
             catch (Exception ex)
             {
-                _appLog.WriteLog("Application path is null.", Logging.Type.Error);
-                _appLog.WriteLog("This should not happen.");
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Application path is null.", Logging.Type.Error);
+                Logging.WriteLog("This should not happen.");
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
     }

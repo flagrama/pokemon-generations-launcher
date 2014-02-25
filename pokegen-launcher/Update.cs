@@ -19,54 +19,49 @@ namespace PokeGen
         private readonly Queue<String> _linkQueue = new Queue<string>();
         private readonly Queue<String> _directoryQueue = new Queue<string>();
         private readonly Queue<String> _previousLinkQueue = new Queue<string>();
-        private readonly Logging _appLog;
         private bool _isFileDownloaded;
-
-        public Update(Logging appLog) {
-            _appLog = appLog;
-        }
 
         public bool CheckForUpdate() {
             var currentVersion = 0;
             var remoteVersion = 0;
             var htmlDocument = new HtmlDocument();
 
-            _appLog.WriteLog("Checking for launcher update.", Logging.Type.Notice);
+            Logging.WriteLog("Checking for launcher update.", Logging.Type.Notice);
 
             try {
                 using (var webClient = new WebClient()) {
                     htmlDocument.LoadHtml(webClient.DownloadString("http://www.pokegen.ca/Release Build/Launcher/version.txt"));
                 }
                 if (!String.IsNullOrEmpty(htmlDocument.DocumentNode.InnerText)) {
-                    _appLog.WriteLog("Remote launcher version found.", Logging.Type.Notice);
+                    Logging.WriteLog("Remote launcher version found.", Logging.Type.Notice);
                     remoteVersion = Int32.Parse(htmlDocument.DocumentNode.InnerText);
                 }
             } catch (Exception ex){
-                _appLog.WriteLog("Unable to reach web server", Logging.Type.Error);
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Unable to reach web server", Logging.Type.Error);
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
             }
 
             if (!File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "version.txt"))) {
-                _appLog.WriteLog("No local version found, downloading new launcher version.", Logging.Type.Warning);
+                Logging.WriteLog("No local version found, downloading new launcher version.", Logging.Type.Warning);
                 return true;
             }
 
             using (var streamReader = new StreamReader(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "version.txt"))) {
-                _appLog.WriteLog("Local launcher version found.", Logging.Type.Notice);
+                Logging.WriteLog("Local launcher version found.", Logging.Type.Notice);
                 currentVersion = Int32.Parse(streamReader.ReadToEnd());
             }
 
             if (remoteVersion > currentVersion) {
-                _appLog.WriteLog("New launcher version found.", Logging.Type.Notice);
+                Logging.WriteLog("New launcher version found.", Logging.Type.Notice);
                 return true;
             }
 
-            _appLog.WriteLog("No new launcher version found.", Logging.Type.Notice);
+            Logging.WriteLog("No new launcher version found.", Logging.Type.Notice);
             return false;
         }
 
         public void DownloadUpdate(String downloadPath, String previousLink) {
-            _appLog.WriteLog("Getting updated launcher files.", Logging.Type.Notice);
+            Logging.WriteLog("Getting updated launcher files.", Logging.Type.Notice);
 
             while (true) {
                 var webClient = new WebClient();
@@ -104,15 +99,15 @@ namespace PokeGen
             }
 
             if (!_fileQueue.Any()) {
-                _appLog.WriteLog("No files to download.");
+                Logging.WriteLog("No files to download.");
                 return;
             };
             DownloadFile();
             if (_isFileDownloaded) {
-                _appLog.WriteLog("Launcher update downloaded.", Logging.Type.Notice);
+                Logging.WriteLog("Launcher update downloaded.", Logging.Type.Notice);
                 ApplyUpdate();
             } else {
-                _appLog.WriteLog("No files downloaded", Logging.Type.Warning);
+                Logging.WriteLog("No files downloaded", Logging.Type.Warning);
             }
         }
 
@@ -126,7 +121,7 @@ namespace PokeGen
         }
 
         private void ApplyUpdate() {
-            _appLog.WriteLog("Applying Update.");
+            Logging.WriteLog("Applying Update.");
 
             using (var streamWriter = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.bat"), false)) {
                 streamWriter.WriteLine(":Repeat");
@@ -147,8 +142,8 @@ namespace PokeGen
             try {
                 Process.Start(process);
             } catch (Exception ex) {
-                _appLog.WriteLog("Unable to start launcher.bat to update.", Logging.Type.Error);
-                _appLog.WriteLog(ex.Message, Logging.Type.Error);
+                Logging.WriteLog("Unable to start launcher.bat to update.", Logging.Type.Error);
+                Logging.WriteLog(ex.Message, Logging.Type.Error);
             }
         }
     }
