@@ -30,15 +30,6 @@ namespace PokeGen.Model {
         public bool PathIsEnabled { get; private set; }
         public string VersionStatus { get; private set; }
         public int ProgressValue { get; private set; }
-        public String NewsItem1 { get; private set; }
-        public String NewsItem2 { get; private set; }
-        public String NewsItem3 { get; private set; }
-        public String NewsItemLink1 { get; private set; }
-        public String NewsItemLink2 { get; private set; }
-        public String NewsItemLink3 { get; private set; }
-        public String NewsItemDate1 { get; private set; }
-        public String NewsItemDate2 { get; private set; }
-        public String NewsItemDate3 { get; private set; }
         public BitmapImage NewsPic1 { get; private set; }
         public BitmapImage NewsPic2 { get; private set; }
         public BitmapImage NewsPic3 { get; private set; }
@@ -132,68 +123,6 @@ namespace PokeGen.Model {
             OnPropertyChanged("SavePath");
 
             RecheckPath();
-        }
-
-        public void LoadNews() {
-            var htmlWeb = new HtmlWeb();
-            var htmlDocument = htmlWeb.Load("http://www.moddb.com/games/pokemon-generations/news");
-
-            var artNode1 = htmlDocument.DocumentNode.SelectSingleNode("(//h4)[position() = 1]");
-            var artNode2 = htmlDocument.DocumentNode.SelectSingleNode("(//h4)[position() = 2]");
-            var artNode3 = htmlDocument.DocumentNode.SelectSingleNode("(//h4)[position() = 3]");
-
-            var artNameNode1 = artNode1.SelectSingleNode(".//a[@href]");
-            var artNameNode2 = artNode2.SelectSingleNode(".//a[@href]");
-            var artNameNode3 = artNode3.SelectSingleNode(".//a[@href]");
-
-            var artDateNode1 = htmlDocument.DocumentNode.SelectSingleNode("(//span[@class='date'])[position() = 2]");
-            var artDateNode2 = htmlDocument.DocumentNode.SelectSingleNode("(//span[@class='date'])[position() = 3]");
-            var artDateNode3 = htmlDocument.DocumentNode.SelectSingleNode("(//span[@class='date'])[position() = 4]");
-
-            NewsItem1 = artNameNode1.InnerHtml;
-            NewsItem2 = artNameNode2.InnerHtml;
-            NewsItem3 = artNameNode3.InnerHtml;
-
-            NewsItemLink1 = "http://www.moddb.com" + artNameNode1.Attributes["href"].Value;
-            NewsItemLink2 = "http://www.moddb.com" + artNameNode2.Attributes["href"].Value;
-            NewsItemLink3 = "http://www.moddb.com" + artNameNode3.Attributes["href"].Value;
-
-            NewsItemDate1 = artDateNode1.InnerHtml;
-            NewsItemDate2 = artDateNode2.InnerHtml;
-            NewsItemDate3 = artDateNode3.InnerHtml;
-
-            OnPropertyChanged("NewsItem1");
-            OnPropertyChanged("NewsItem2");
-            OnPropertyChanged("NewsItem3");
-            OnPropertyChanged("NewsItemDate1");
-            OnPropertyChanged("NewsItemDate2");
-            OnPropertyChanged("NewsItemDate3");
-        }
-
-        public void FindImages() {
-            var htmlWeb = new HtmlWeb();
-            var htmlDocument = htmlWeb.Load("http://www.moddb.com/games/pokemon-generations");
-
-            var newDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[@class='mediapreview clear']");
-            var link1 = newDiv.SelectSingleNode("(.//a[@href])[position() = 1]");
-            var link2 = newDiv.SelectSingleNode("(.//a[@href])[position() = 2]");
-            var link3 = newDiv.SelectSingleNode("(.//a[@href])[position() = 3]");
-
-            NewsPicLink1 = "http://www.moddb.com" + link1.Attributes["href"].Value;
-            NewsPicLink2 = "http://www.moddb.com" + link2.Attributes["href"].Value;
-            NewsPicLink3 = "http://www.moddb.com" + link3.Attributes["href"].Value;
-
-            var img1 = newDiv.SelectSingleNode(".//img[@src]");
-            var src1 = img1.Attributes["src"].Value;
-            NewsPic1 = new BitmapImage(new Uri(src1, UriKind.Absolute));
-
-            var img2 = htmlDocument.DocumentNode.SelectSingleNode("(.//img)[position() = 3]");
-            var src2 = img2.Attributes["src"].Value;
-            NewsPic2 = new BitmapImage(new Uri(src2, UriKind.Absolute));
-
-            var img3 = htmlDocument.DocumentNode.SelectSingleNode("(.//img)[position() = 4]");
-            var src3 = img3.Attributes["src"].Value;
-            NewsPic3 = new BitmapImage(new Uri(src3, UriKind.Absolute));
         }
 
         public void StartCheckingFiles() {
