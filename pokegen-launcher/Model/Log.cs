@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Windows.Forms;
 
-namespace PokeGen
+namespace PokeGen.Model
 {
-    static class Logging {
+    static class Log {
         public enum Type {
             None,
             Notice,

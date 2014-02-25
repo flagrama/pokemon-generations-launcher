@@ -15,13 +15,15 @@
 \***************************************************************************/
 
 #region Using directives
+
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+
 #endregion
 
 
-namespace PokeGen.Permissions
+namespace PokeGen.Model.Permissions
 {
     /// <summary>
     /// The TOKEN_INFORMATION_CLASS enumeration type contains values that 
