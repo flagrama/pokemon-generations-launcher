@@ -52,8 +52,9 @@ namespace PokeGen.ViewModel {
         }
 
         private void LoadLauncher() {
-            Logging.WriteLog("--------------------------------------------------------------------------------");
-            Logging.WriteLog("Application Started");
+            _modelLauncher = new Launcher();
+            Log.WriteLog("--------------------------------------------------------------------------------");
+            Log.WriteLog("Application Started");
         }
 
         public ICommand LoadCommand { get; private set; }
@@ -75,7 +76,7 @@ namespace PokeGen.ViewModel {
         public ICommand NewsPic3Command { get; private set; }
 
         private void OnLoad() {
-            Logging.WriteLog("Loading main window.", Logging.Type.Notice);
+            Log.WriteLog("Loading main window.", Log.Type.Notice);
 
             if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()) {
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.pathName)) {
@@ -84,11 +85,11 @@ namespace PokeGen.ViewModel {
 
                 if (!string.IsNullOrEmpty(ModelLauncher.SavePath)) {
                     if (!Directory.Exists(Path.Combine(ModelLauncher.SavePath, "PokeGen"))) {
-                        Logging.WriteLog("PokeGen directory not found.", Logging.Type.Warning);
+                        Log.WriteLog("PokeGen directory not found.", Log.Type.Warning);
                         ModelLauncher.ChoosePath();
                     }
                 } else {
-                    Logging.WriteLog("Game path settings not found.", Logging.Type.Warning);
+                    Log.WriteLog("Game path settings not found.", Log.Type.Warning);
                     ModelLauncher.ChoosePath();
                 }
 
@@ -101,16 +102,16 @@ namespace PokeGen.ViewModel {
 
                 OnPropertyChanged("ModelLauncher");
             } else {
-                Logging.WriteLog("Internet connection not found.", Logging.Type.Error);
+                Log.WriteLog("Internet connection not found.", Log.Type.Error);
                 var connectionFailure = new View.ConnectionFailure();
                 connectionFailure.ShowDialog();
-                Logging.WriteLog("Shutting down application.");
+                Log.WriteLog("Shutting down application.");
                 Application.Current.Shutdown();
             }
         }
 
         private void OnClose() {
-            Logging.WriteLog("Shutting down application.");
+            Log.WriteLog("Shutting down application.");
             Application.Current.Shutdown();
         }
 
@@ -124,11 +125,11 @@ namespace PokeGen.ViewModel {
             if (File.Exists(gamePath)) {
                 try {
                     Process.Start(gamePath);
-                    Logging.WriteLog("Shutting down application.");
+                    Log.WriteLog("Shutting down application.");
                     Application.Current.Shutdown();
                 } catch (Exception ex) {
-                    Logging.WriteLog("The operating system cannot run the executable", Logging.Type.Error);
-                    Logging.WriteLog(ex.Message, Logging.Type.Error);
+                    Log.WriteLog("The operating system cannot run the executable", Log.Type.Error);
+                    Log.WriteLog(ex.Message, Log.Type.Error);
                     var connectionFailure = new View.ConnectionFailure {
                         label13 = {Content = "PokeGen.exe is invalid"},
                         textBlock1 = {
@@ -140,7 +141,7 @@ namespace PokeGen.ViewModel {
                         Title = "Invalid Executable"
                     };
                     connectionFailure.ShowDialog();
-                    Logging.WriteLog("Shutting down application.");
+                    Log.WriteLog("Shutting down application.");
                     Application.Current.MainWindow.Close();
                 }
             } else {
