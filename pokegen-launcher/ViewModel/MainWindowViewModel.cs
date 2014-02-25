@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Commands;
 using PokeGen.Model;
 
@@ -21,6 +23,17 @@ namespace PokeGen.ViewModel {
         }
 
         public WindowState WindowState { get; set; }
+        public string UpdateStatus { get; private set; }
+        public Visibility ProgressVisibility { get; private set; }
+        public bool PlayIsEnabled { get; private set; }
+        public bool RecheckIsEnabled { get; private set; }
+        public bool PathIsEnabled { get; private set; }
+        public string VersionStatus { get; private set; }
+        public ObservableCollection<String> NewsTextTitle { get; set; }
+        public ObservableCollection<String> NewsTextDate { get; set; }
+        public ObservableCollection<String> NewsTextLink { get; set; }
+        public ObservableCollection<String> NewsPicLink { get; set; }
+        public ObservableCollection<BitmapImage> NewsPicBitmap { get; set; }
 
         public MainWindowViewModel() {
             // Button Commands
@@ -53,6 +66,13 @@ namespace PokeGen.ViewModel {
 
         private void LoadLauncher() {
             _modelLauncher = new Launcher();
+
+            NewsTextTitle = new ObservableCollection<string>();
+            NewsTextDate = new ObservableCollection<string>();
+            NewsTextLink = new ObservableCollection<string>();
+            NewsPicLink = new ObservableCollection<string>();
+            NewsPicBitmap = new ObservableCollection<BitmapImage>();
+
             Log.WriteLog("--------------------------------------------------------------------------------");
             Log.WriteLog("Application Started");
         }
@@ -93,8 +113,22 @@ namespace PokeGen.ViewModel {
                     ModelLauncher.ChoosePath();
                 }
 
-                ModelLauncher.LoadNews();
-                ModelLauncher.FindImages();
+                //ModelLauncher.LoadNews();
+                for (var i = 0; i < 3; i++) {
+                    var newsItem = GameNews.LoadNews(i);
+
+                    NewsTextTitle.Add(newsItem.NewsTextTitle);
+                    NewsTextDate.Add(newsItem.NewsTextDate);
+                    NewsTextLink.Add(newsItem.NewsTextLink);
+                    NewsPicLink.Add(newsItem.NewsPicLink);
+                    NewsPicBitmap.Add(newsItem.NewsPicBitmap);
+                }
+                OnPropertyChanged("NewsTextTitle");
+                OnPropertyChanged("NewsTextDate");
+                OnPropertyChanged("NewsTextLink");
+                OnPropertyChanged("NewsPicLink");
+                OnPropertyChanged("NewsPicBitmap");
+                //ModelLauncher.FindImages();
 
                 var backgroundWorker = new BackgroundWorker();
                 backgroundWorker.DoWork += (e, sender) => ModelLauncher.CheckPath();
@@ -163,15 +197,15 @@ namespace PokeGen.ViewModel {
         }
 
         private void OnNewsItem1() {
-            Process.Start(ModelLauncher.NewsItemLink1);
+            Process.Start(NewsTextLink[0]);
         }
 
         private void OnNewsItem2() {
-            Process.Start(ModelLauncher.NewsItemLink2);
+            Process.Start(NewsTextLink[1]);
         }
 
         private void OnNewsItem3() {
-            Process.Start(ModelLauncher.NewsItemLink3);
+            Process.Start(NewsTextLink[2]);
         }
 
         private static void OnOpenDonate() {
@@ -191,15 +225,15 @@ namespace PokeGen.ViewModel {
         }
 
         private void OnNewsPic1() {
-            Process.Start(ModelLauncher.NewsPicLink1);
+            Process.Start(NewsPicLink[0]);
         }
 
         private void OnNewsPic2() {
-            Process.Start(ModelLauncher.NewsPicLink2);
+            Process.Start(NewsPicLink[1]);
         }
 
         private void OnNewsPic3() {
-            Process.Start(ModelLauncher.NewsPicLink3);
+            Process.Start(NewsPicLink[2]);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
