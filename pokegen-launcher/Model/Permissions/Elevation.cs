@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
 
-namespace PokeGen.Permissions
+namespace PokeGen.Model.Permissions
 {
     class Elevation
     {
