@@ -30,12 +30,6 @@ namespace PokeGen.Model {
         public bool PathIsEnabled { get; private set; }
         public string VersionStatus { get; private set; }
         public int ProgressValue { get; private set; }
-        public BitmapImage NewsPic1 { get; private set; }
-        public BitmapImage NewsPic2 { get; private set; }
-        public BitmapImage NewsPic3 { get; private set; }
-        public String NewsPicLink1 { get; private set; }
-        public String NewsPicLink2 { get; private set; }
-        public String NewsPicLink3 { get; private set; }
 
         public Launcher() {
         }
@@ -188,7 +182,6 @@ namespace PokeGen.Model {
                 Log.WriteLog(ex.Message, Log.Type.Error);
             }
         }
-
 
         private void GetUpdateFiles(string downloadPath, string previousLink) {
             Log.WriteLog("Getting files that need updated.", Log.Type.Notice);

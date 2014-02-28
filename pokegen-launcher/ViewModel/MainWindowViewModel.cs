@@ -113,7 +113,6 @@ namespace PokeGen.ViewModel {
                     ModelLauncher.ChoosePath();
                 }
 
-                //ModelLauncher.LoadNews();
                 for (var i = 0; i < 3; i++) {
                     var newsItem = GameNews.LoadNews(i);
 
@@ -128,7 +127,6 @@ namespace PokeGen.ViewModel {
                 OnPropertyChanged("NewsTextLink");
                 OnPropertyChanged("NewsPicLink");
                 OnPropertyChanged("NewsPicBitmap");
-                //ModelLauncher.FindImages();
 
                 var backgroundWorker = new BackgroundWorker();
                 backgroundWorker.DoWork += (e, sender) => ModelLauncher.CheckPath();
