@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Windows.Forms;
 
-namespace PokeGen
+namespace PokeGen.Model
 {
-    class Logging {
+    static class Log {
         public enum Type {
             None,
             Notice,
@@ -19,7 +15,7 @@ namespace PokeGen
 
         //private readonly StreamWriter _file = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"), true);
 
-        public void WriteLog(String message, Type type = Type.None) {
+        public static void WriteLog(String message, Type type = Type.None) {
             try {
                 var file =
                     new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "launcher.log"),

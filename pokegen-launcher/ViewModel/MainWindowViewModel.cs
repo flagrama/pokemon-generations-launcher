@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Prism.Commands;
 using PokeGen.Model;
 
@@ -21,7 +23,17 @@ namespace PokeGen.ViewModel {
         }
 
         public WindowState WindowState { get; set; }
-        public Logging AppLog { get; set; }
+        public string UpdateStatus { get; private set; }
+        public Visibility ProgressVisibility { get; private set; }
+        public bool PlayIsEnabled { get; private set; }
+        public bool RecheckIsEnabled { get; private set; }
+        public bool PathIsEnabled { get; private set; }
+        public string VersionStatus { get; private set; }
+        public ObservableCollection<String> NewsTextTitle { get; set; }
+        public ObservableCollection<String> NewsTextDate { get; set; }
+        public ObservableCollection<String> NewsTextLink { get; set; }
+        public ObservableCollection<String> NewsPicLink { get; set; }
+        public ObservableCollection<BitmapImage> NewsPicBitmap { get; set; }
 
         public MainWindowViewModel() {
             // Button Commands
@@ -53,10 +65,16 @@ namespace PokeGen.ViewModel {
         }
 
         private void LoadLauncher() {
-            AppLog = new Logging();
-            ModelLauncher = new Launcher(AppLog);
-            AppLog.WriteLog("--------------------------------------------------------------------------------");
-            AppLog.WriteLog("Application Started");
+            _modelLauncher = new Launcher();
+
+            NewsTextTitle = new ObservableCollection<string>();
+            NewsTextDate = new ObservableCollection<string>();
+            NewsTextLink = new ObservableCollection<string>();
+            NewsPicLink = new ObservableCollection<string>();
+            NewsPicBitmap = new ObservableCollection<BitmapImage>();
+
+            Log.WriteLog("--------------------------------------------------------------------------------");
+            Log.WriteLog("Application Started");
         }
 
         public ICommand LoadCommand { get; private set; }
@@ -78,7 +96,7 @@ namespace PokeGen.ViewModel {
         public ICommand NewsPic3Command { get; private set; }
 
         private void OnLoad() {
-            AppLog.WriteLog("Loading main window.", Logging.Type.Notice);
+            Log.WriteLog("Loading main window.", Log.Type.Notice);
 
             if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()) {
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.pathName)) {
@@ -87,16 +105,28 @@ namespace PokeGen.ViewModel {
 
                 if (!string.IsNullOrEmpty(ModelLauncher.SavePath)) {
                     if (!Directory.Exists(Path.Combine(ModelLauncher.SavePath, "PokeGen"))) {
-                        AppLog.WriteLog("PokeGen directory not found.", Logging.Type.Warning);
+                        Log.WriteLog("PokeGen directory not found.", Log.Type.Warning);
                         ModelLauncher.ChoosePath();
                     }
                 } else {
-                    AppLog.WriteLog("Game path settings not found.", Logging.Type.Warning);
+                    Log.WriteLog("Game path settings not found.", Log.Type.Warning);
                     ModelLauncher.ChoosePath();
                 }
 
-                ModelLauncher.LoadNews();
-                ModelLauncher.FindImages();
+                for (var i = 0; i < 3; i++) {
+                    var newsItem = GameNews.LoadNews(i);
+
+                    NewsTextTitle.Add(newsItem.NewsTextTitle);
+                    NewsTextDate.Add(newsItem.NewsTextDate);
+                    NewsTextLink.Add(newsItem.NewsTextLink);
+                    NewsPicLink.Add(newsItem.NewsPicLink);
+                    NewsPicBitmap.Add(newsItem.NewsPicBitmap);
+                }
+                OnPropertyChanged("NewsTextTitle");
+                OnPropertyChanged("NewsTextDate");
+                OnPropertyChanged("NewsTextLink");
+                OnPropertyChanged("NewsPicLink");
+                OnPropertyChanged("NewsPicBitmap");
 
                 var backgroundWorker = new BackgroundWorker();
                 backgroundWorker.DoWork += (e, sender) => ModelLauncher.CheckPath();
@@ -104,16 +134,16 @@ namespace PokeGen.ViewModel {
 
                 OnPropertyChanged("ModelLauncher");
             } else {
-                AppLog.WriteLog("Internet connection not found.", Logging.Type.Error);
+                Log.WriteLog("Internet connection not found.", Log.Type.Error);
                 var connectionFailure = new View.ConnectionFailure();
                 connectionFailure.ShowDialog();
-                AppLog.WriteLog("Shutting down application.");
+                Log.WriteLog("Shutting down application.");
                 Application.Current.Shutdown();
             }
         }
 
         private void OnClose() {
-            AppLog.WriteLog("Shutting down application.");
+            Log.WriteLog("Shutting down application.");
             Application.Current.Shutdown();
         }
 
@@ -127,11 +157,11 @@ namespace PokeGen.ViewModel {
             if (File.Exists(gamePath)) {
                 try {
                     Process.Start(gamePath);
-                    AppLog.WriteLog("Shutting down application.");
+                    Log.WriteLog("Shutting down application.");
                     Application.Current.Shutdown();
                 } catch (Exception ex) {
-                    AppLog.WriteLog("The operating system cannot run the executable", Logging.Type.Error);
-                    AppLog.WriteLog(ex.Message, Logging.Type.Error);
+                    Log.WriteLog("The operating system cannot run the executable", Log.Type.Error);
+                    Log.WriteLog(ex.Message, Log.Type.Error);
                     var connectionFailure = new View.ConnectionFailure {
                         label13 = {Content = "PokeGen.exe is invalid"},
                         textBlock1 = {
@@ -143,7 +173,7 @@ namespace PokeGen.ViewModel {
                         Title = "Invalid Executable"
                     };
                     connectionFailure.ShowDialog();
-                    AppLog.WriteLog("Shutting down application.");
+                    Log.WriteLog("Shutting down application.");
                     Application.Current.MainWindow.Close();
                 }
             } else {
@@ -165,19 +195,19 @@ namespace PokeGen.ViewModel {
         }
 
         private void OnNewsItem1() {
-            Process.Start(ModelLauncher.NewsItemLink1);
+            Process.Start(NewsTextLink[0]);
         }
 
         private void OnNewsItem2() {
-            Process.Start(ModelLauncher.NewsItemLink2);
+            Process.Start(NewsTextLink[1]);
         }
 
         private void OnNewsItem3() {
-            Process.Start(ModelLauncher.NewsItemLink3);
+            Process.Start(NewsTextLink[2]);
         }
 
         private static void OnOpenDonate() {
-            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZJF34JJCMLAFN");
+            Process.Start("http://pokegen.freeforums.org/donations-for-servers-websites-feb-15th-2014-t1526.html");
         }
 
         private static void OnOpenModDb() {
@@ -193,15 +223,15 @@ namespace PokeGen.ViewModel {
         }
 
         private void OnNewsPic1() {
-            Process.Start(ModelLauncher.NewsPicLink1);
+            Process.Start(NewsPicLink[0]);
         }
 
         private void OnNewsPic2() {
-            Process.Start(ModelLauncher.NewsPicLink2);
+            Process.Start(NewsPicLink[1]);
         }
 
         private void OnNewsPic3() {
-            Process.Start(ModelLauncher.NewsPicLink3);
+            Process.Start(NewsPicLink[2]);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
