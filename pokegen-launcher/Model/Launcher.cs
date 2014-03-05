@@ -415,7 +415,7 @@ namespace PokeGen.Model {
                 OnPropertyChanged("RecheckIsEnabled");
                 OnPropertyChanged("UpdateStatus");
                 try {
-                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                    update.DownloadUpdate("http://www.pokegen.ca/Release Build/Launcher/", "");
                 } catch {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = true,
@@ -426,7 +426,7 @@ namespace PokeGen.Model {
                     Log.WriteLog("Elevating permissions to download update.", Log.Type.Notice);
                     Process.Start(proc);
 
-                    update.DownloadUpdate("http://www.flagrama.com/pokegen-launcher/", "");
+                    update.DownloadUpdate("http://www.pokegen.ca/Release Build/Launcher/", "");
                 }
 
                 Log.WriteLog("Restarting application to apply update.");

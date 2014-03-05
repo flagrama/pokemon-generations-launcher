@@ -207,7 +207,7 @@ namespace PokeGen.ViewModel {
         }
 
         private static void OnOpenDonate() {
-            Process.Start("http://pokegen.freeforums.org/donations-for-servers-websites-feb-15th-2014-t1526.html");
+            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZJF34JJCMLAFN");
         }
 
         private static void OnOpenModDb() {
